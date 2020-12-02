@@ -7,10 +7,12 @@ all: image
 agfalta_tools:
 	git clone git@github.com:surf-sci-bc/agfalta_tools.git
 	git -C agfalta_tools checkout $(VERSION)
+
+gettag: agfalta_tools FORCE
 	$(eval TAG=$$(shell git -C agfalta_tools describe))
 	@echo "\033[94m### checked out git $(VERSION)\033[0m"
 
-build: agfalta_tools
+build: agfalta_tools gettag
 	docker build -t $(NAME):$(TAG) -t $(NAME):latest .
 	@echo "\033[94m### built docker image $(NAME):$(TAG)\033[0m"
 
@@ -23,14 +25,6 @@ image: build push clean
 
 clean:
 	rm -rf agfalta_tools
-
-tet: agfalta_tools
-	@echo $(TAG)
-
-test:
-	@echo $(TAG)
-
-tot: tet test
 
 FORCE:
 

@@ -11,17 +11,26 @@ agfalta_tools:
 	@echo "\033[94m### checked out git $(VERSION)\033[0m"
 
 build: agfalta_tools
-	docker build -t $(NAME):$(TAG) -t $(NAME):latest
+	docker build -t $(NAME):$(TAG) -t $(NAME):latest .
 	@echo "\033[94m### built docker image $(NAME):$(TAG)\033[0m"
 
 push:
 	docker push $(NAME):$(TAG)
+	docker push $(NAME):latest
 	@echo "\033[94m### pushed docker image $(NAME):$(TAG)\033[0m"
 
 image: build push clean
 
 clean:
 	rm -rf agfalta_tools
+
+tet: agfalta_tools
+	@echo $(TAG)
+
+test:
+	@echo $(TAG)
+
+tot: tet test
 
 FORCE:
 

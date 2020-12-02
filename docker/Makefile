@@ -2,7 +2,7 @@ NAME		:= localhost:5000/agfalta_tools
 TAG			 = latest
 VERSION := HEAD
 
-all: image
+all: build push clean
 
 agfalta_tools:
 	git clone git@github.com:surf-sci-bc/agfalta_tools.git
@@ -21,11 +21,9 @@ push:
 	docker push $(NAME):latest
 	@echo "\033[94m### pushed docker image $(NAME):$(TAG)\033[0m"
 
-image: build push clean
-
 clean:
 	rm -rf agfalta_tools
 
 FORCE:
 
-.PHONY: FORCE image build push clean
+.PHONY: FORCE build push clean

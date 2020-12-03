@@ -1,6 +1,9 @@
 # calls the subdirectories' makefiles
 
 docker:
-	make -C "docker"
+	$(MAKE) -C docker
+
+tljh-config:
+	$(MAKE) -C tljh configure
 
 .PHONY: docker

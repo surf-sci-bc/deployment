@@ -3,7 +3,7 @@ This goes into
 /opt/tljh/config/jupyterhub_config.d/
 """
 from jupyter_client.localinterfaces import public_ips
-from systemuserspawner import SystemUserSpawner
+from dockerspawner import SystemUserSpawner
 from tornado import gen, web
 
 

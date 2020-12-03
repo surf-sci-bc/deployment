@@ -19,12 +19,14 @@ def get_docker_tags(repo_name):
 
 c.JupyterHub.hub_ip = public_ips()[0]
 c.JupyterHub.cleanup_servers = False
-c.JupyterHub.spawner_class = "dockerspawner.SystemUserSpawner"
+c.Spawner.default_url = "/lab"
 c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
+
+c.JupyterHub.spawner_class = "dockerspawner.SystemUserSpawner"
 
 c.DockerSpawner.allowed_images = dict(
     (tag, f"localhost:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )
-c.DockerSpawner.pull_policy = "Never"
+c.DockerSpawner.pull_policy = "always"
 c.DockerSpawner.remove = True

@@ -85,6 +85,12 @@ c.DockerSpawner.image_whitelist = dict(
     (tag, f"localhost:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )
+c.DockerSpawner.volumes = {
+    "/home/agfalta/public": {"bind": "/home/{username}/public", "mode": "Z"},
+    "/home/agfalta/labbooks": {"bind": "/home/{username}/labbooks", "mode": "ro"},
+    "/home/agfalta/demos": {"bind": "/home/{username}/demos", "mode": "ro"},
+    "/mnt/data": {"bind": "/home/{username}/data", "mode": "ro"}
+}
 c.DockerSpawner.pull_policy = "always"
 c.DockerSpawner.remove = True
 

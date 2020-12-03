@@ -1,4 +1,6 @@
-#### Preparation
+# Setting up TLJH on Proxmox
+
+## Preparation
 see https://tljh.jupyter.org/en/latest/install/custom-server.html for reference. First make sure the necessary packages are installed:
 
 ````
@@ -14,7 +16,7 @@ git clone https://github.com/surf-sci-bc/agfalta_tools.git
 You need access to the private repository to clone it. Now that you have done this
 
 
-#### Install The Littlest Jupyterhub
+## Install The Littlest Jupyterhub
 see https://tljh.jupyter.org/en/latest/install/custom-server.html for reference.
 
 Now everything is prepared to install TLJH
@@ -32,7 +34,7 @@ After the installation is finished open http://\<ip-of-hub\> and log in with use
 
 Check that a home directory named ````jupyter-admin```` has been created.
 
-#### Install Docker
+## Install Docker
 Because TLJH is supposed to run the single-user serveres inside docker containers, docker needs to be installed on the host
 ````
 sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
@@ -42,7 +44,7 @@ sudo apt update && sudo apt install -y docker-ce
 ````
 This adds the docker repository to apt, adds the key and installs the docker community edition.
 
-#### Add user to docker group
+### Add user to docker group
 To run docker without using sudo, the user has to added to the docker group (which has to be created first when not already present)
 ````
 sudo groupadd docker
@@ -55,42 +57,51 @@ The installation can be checked by:
 ````
 which should yield a hello world message
 
-#### Set up docker registry
+### Set up docker registry
 In order for Jupyterhub to find the docker image to run a container a registry has to set up, where the images are pushed to. This creates a registry-server which listens to ````port 5000```` of ````localhost````. It is only available from ````localhost```` which should be no problem for this use case. When exposing to outside of ````localhost```` additional security measures have to be taken!
 ````
-docker run -d -p 5000:5000 --name registry --restart=always registry:2
+docker run -d -p 5000:5000 --name registry --restart=always -e REGISTRY_STORAGE_DELETE_ENABLED=true registry:2
 ````
-#### Install repo2docker
-repo2docker enables us to directly create docker images from git repositories without any knowledge of docker at all. Just install by pip ...
-````
-python3 -m pip install jupyter-repo2docker
-````
-#### Create docker image from repository
-... and run on the disiered repository. The image has to be tagged in order to push it to the previously created docker-registry. User the expression ````localhost:5000/REPO_NAME:TAG````, where ````TAG```` can be either a commit hash or a tagged version. By ````--push```` the image is then pushed to the registry listening to ````port 5000```` on ````localhost````
-````
-jupyter-repo2docker --image-name localhost:5000/agfalta_tools:VERSION --ref VERSION --target-repo-dir /home/jovyan/agfalta_tools --user-name jovyan --no-run --push path/to/agfalta_repo
-````
-#### Install Dockerspawner
+
+## Install Dockerspawner
 Dockerspawner is used for spawning single user servers inside docker containers. It has to be installed to the virtual environment of TLJH.
 
 ````
 sudo -E /opt/tljh/hub/bin/python3 -m pip install dockerspawner jupyter_client
 ````
 
-To tell TLJH to use DockerSpawner as the singleuser-server spawner the config of the hub needs to be modified. Open a new config file using ````nano````
-````
-sudo nano /opt/tljh/config/jupyterhub_config.d/dockerspawner_tljh_config.py
-````
-and paste the configuration: (this will be updated for multiple images.)
-````
-c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
-c.DockerSpawner.image = 'localhost:5000/agfaltatools:VERSION' # this is the image the DockerSpawner will spawn
-from jupyter_client.localinterfaces import public_ips
-c.JupyterHub.hub_ip = public_ips()[0]
-c.JupyterHub.cleanup_servers = False
-c.DockerSpawner.cmd = ["jupyterhub-singleuser"]
-````
+## Configuration
+
+Put the config file into the right directory (assumes you are in this repo's root):
+
+```
+$ sudo cp tljh/jupyterhub_config.py /opt/tljh/config/jupyterhub_config.d
+$ sudo tljh-config reload
+```
 Reload the configuration
+
 ````
 sudo tljh-config reload
 ````
+## Mounting the surfer data file
+
+Open fstab by `sudo nano /etc/fstab`. Then add this line:
+
+```
+# Add to /etc/fstab
+//192.168.2.99/data   /home/agfalta/data    cifs    credentials=/home/agfalta/.credentials,auto,ro,mfsymlinks   0   0
+```
+
+You need to have the credentials of the data servers samba user in the above mentioned file in this form:
+```
+# /home/agfalta/.credentials
+user=xxx
+password=xxx
+```
+
+Also install cifs and finally mount the data volume:
+
+```sh
+$ sudo apt install cifs-utils
+$ sudo mount -a
+```

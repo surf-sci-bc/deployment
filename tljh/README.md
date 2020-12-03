@@ -70,20 +70,17 @@ Dockerspawner is used for spawning single user servers inside docker containers.
 sudo -E /opt/tljh/hub/bin/python3 -m pip install dockerspawner jupyter_client
 ````
 
-## Configuration
+## Configure TLJH
 
 Put the config file into the right directory (assumes you are in this repo's root):
 
 ```
-$ sudo cp tljh/jupyterhub_config.py /opt/tljh/config/jupyterhub_config.d
-$ sudo tljh-config reload
+$ sudo make tljh-config
 ```
-Reload the configuration
 
-````
-sudo tljh-config reload
-````
-## Mounting the surfer data file
+This will create the directories `/home/agfalta/demos`, `/home/agfalta/labbooks`, `/home/agfalta/public` when the first hub user spawns a container. They can also be created and filled before.
+
+## Mount the surfer data network share
 
 Open fstab by `sudo nano /etc/fstab`. Then add this line:
 
@@ -99,7 +96,7 @@ user=xxx
 password=xxx
 ```
 
-Also install cifs and finally mount the data volume:
+Also, install cifs and finally mount the data folder:
 
 ```sh
 $ sudo apt install cifs-utils

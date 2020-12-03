@@ -1,5 +1,9 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook
+ARG BASE_CONTAINER=jupyter/minimal-notebook:5cfa60996e84
 FROM $BASE_CONTAINER
+
+ARG JUPYTERHUB_VERSION=1.1.0
+RUN python3 -m pip install --no-cache \
+    jupyterhub==$JUPYTERHUB_VERSION
 
 USER root
 

@@ -5,6 +5,7 @@ This goes into
 # pylint: disable=missing-docstring
 # pylint: disable=import-error
 
+import sys
 import pwd
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator

@@ -2,8 +2,7 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:5cfa60996e84
 FROM $BASE_CONTAINER
 
 ARG JUPYTERHUB_VERSION=1.1.0
-RUN python3 -m pip install --no-cache \
-    jupyterhub==$JUPYTERHUB_VERSION
+RUN python3 -m pip install --no-cache jupyterhub==$JUPYTERHUB_VERSION
 
 USER root
 
@@ -14,8 +13,8 @@ RUN apt-get update && \
 
 USER $NB_UID
 
-RUN python3 -m pip install --upgrade pip && \
-    python3 -m pip install ipympl ipywidgets matplotlib && \
+RUN python3 -m pip install --upgrade --no-cache pip && \
+    python3 -m pip install --no-cache ipympl ipywidgets matplotlib && \
     # Activate ipywidgets extension for JupyterLab, check here for compatibilities:
     # https://github.com/jupyter-widgets/ipywidgets/tree/master/packages/jupyterlab-manager
     jupyter labextension install @jupyter-widgets/jupyterlab-manager@^2.0.0 --no-build && \
@@ -27,13 +26,10 @@ RUN python3 -m pip install --upgrade pip && \
     rm -rf "/home/${NB_USER}/.node-gyp" && \
     fix-permissions "/home/${NB_USER}"
 
-WORKDIR /tmp
+# currently relies on agfalta_tools being in the same directory as the Dockerfile
+COPY --chown=${NB_UID}:${NB_GID} agfalta_tools /tmp/agfalta_tools
 
-# currently relies on agfalta_tools beeing in the same directory as the Dockerfile
-
-COPY --chown=${NB_UID}:${NB_GID} agfalta_tools agfalta_tools
-
-RUN python3 -m pip install agfalta_tools/. && \
+RUN python3 -m pip install /tmp/agfalta_tools/. && \
     rm -rf /tmp/agfalta_tools && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"

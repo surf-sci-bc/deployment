@@ -1,5 +1,9 @@
 # agfalta_tools deployment
 
+<p align="center">
+  <img width="417" height="300" src="proxmox/deployment.png">
+</p>
+
 This repo contains setup scripts and configuration files for deploying code on the agfalta jupyter server.
 
 ## TLJH

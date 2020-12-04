@@ -1,20 +1,11 @@
 # Setting up TLJH on Proxmox
 
 ## Preparation
-see https://tljh.jupyter.org/en/latest/install/custom-server.html for reference. First make sure the necessary packages are installed:
 
-````
-sudo apt install python3 python3-dev git curl
-````
-Now that you have git you can already clone the git repository. It seems to be good to do this first, because the TLJH installer seems to mess up some permissions when it runs git first. In order to get the agfalta repository refer to the ````README.md```` of the repository.
+Refer to the ````README```` of the Proxmox installation if you want to deploy TLJH on a Proxmox instance.  
 
-For now:
-````
-cd ~
-git clone https://github.com/surf-sci-bc/agfalta_tools.git
-````
-You need access to the private repository to clone it. Now that you have done this
-
+**Make sure that you are running TLJH on Ubuntu 18.04, as newer versions are not working**  
+(https://github.com/jupyterhub/the-littlest-jupyterhub/issues/613)
 
 ## Install The Littlest Jupyterhub
 see https://tljh.jupyter.org/en/latest/install/custom-server.html for reference.
@@ -30,12 +21,12 @@ This takes approx. 3-5 min.
 
 If you type this over ssh or terminal note that the "enter password" request might be written between the output of the ````curl```` function. So if the installer seems frozen check if the password needs to be given.
 
-After the installation is finished open http://\<ip-of-hub\> and log in with username ````admin````. The password will be set upon first use. Remeber the password.
+After the installation is finished open http://\<ip-of-hub\> and log in with username ````admin````. The password will be set upon first use. Remember the password.
 
 Check that a home directory named ````jupyter-admin```` has been created.
 
 ## Install Docker
-Because TLJH is supposed to run the single-user serveres inside docker containers, docker needs to be installed on the host
+Because TLJH is supposed to run the single-user servers inside docker containers, docker needs to be installed on the host
 ````
 sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -55,7 +46,7 @@ The installation can be checked by:
 ````
  docker run hello-world
 ````
-which should yield a hello world message
+which should yield a hello world message.
 
 ### Set up docker registry
 In order for Jupyterhub to find the docker image to run a container a registry has to set up, where the images are pushed to. This creates a registry-server which listens to ````port 5000```` of ````localhost````. It is only available from ````localhost```` which should be no problem for this use case. When exposing to outside of ````localhost```` additional security measures have to be taken!

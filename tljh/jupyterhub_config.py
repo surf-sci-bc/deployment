@@ -20,7 +20,7 @@ def convert_username(user_name):
 class MyDockerSpawner(SystemUserSpawner):
     def get_env(self):
         env = super().get_env()
-        user_name = f"jupyter-{self.user.name}"
+        user_name = convert_username(self.user.name)
         env.update(dict(USER=user_name, NB_USER=user_name))
         return env
 
@@ -42,9 +42,7 @@ class MyDockerSpawner(SystemUserSpawner):
         else:
             repo = image
             tag = 'latest'
-        self.log.info("This is a custom image puller")
-        self.log.info("Repo: %s"%repo)
-        self.log.info("Tag: %s"%tag)
+        self.log.info(f"Pulling image {repo}:{tag}...")
         yield self.docker('pull', repo, tag)
         return
 
@@ -77,6 +75,13 @@ def get_docker_tags(repo_name):
 # pylint: disable=undefined-variable
 c.JupyterHub.hub_ip = public_ips()[0]
 c.JupyterHub.cleanup_servers = False
+c.JupyterHub.services = [{
+    "name": "cull-idle", "admin": True, "command": [
+        sys.executable, "-m", "jupyterhub_idle_culler",
+        "--timeout=3600", "--cull-every=60",
+        "--max-age=0", "--concurrency=10",
+    ]
+}]
 
 c.JupyterHub.spawner_class = MyDockerSpawner
 c.Spawner.default_url = "/lab"
@@ -88,8 +93,8 @@ c.DockerSpawner.image_whitelist = dict(
 )
 c.DockerSpawner.volumes = {
     "/home/agfalta/public": {"bind": "/home/jupyter-{username}/public", "mode": "rw"},
-    "/home/agfalta/labbooks": {"bind": "/home/jupyter-{username}/labbooks", "mode": "ro"},
-    "/home/agfalta/demos": {"bind": "/home/jupyter-{username}/demos", "mode": "ro"},
+    "/mnt/analysis/jupyter-labbooks": {"bind": "/home/jupyter-{username}/labbooks", "mode": "rw"},
+    "/mnt/analysis/demos": {"bind": "/home/jupyter-{username}/demos", "mode": "rw"},
     "/mnt/data": {"bind": "/home/jupyter-{username}/data", "mode": "ro"}
 }
 c.DockerSpawner.pull_policy = "always"

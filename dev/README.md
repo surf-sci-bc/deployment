@@ -64,8 +64,6 @@ $ make dev-run
 
 You can now access the container by the link that is given in the terminal. `agfalta_tools` is mounted from the projects folder, so changes to `agfalta_tools` are directly affecting the development environment inside the container and vice versa.
 
-_Note:_ If you want to use JupyterLab instead of Jupyter notebook, change the last part of the URL from `tree` to `lab`.
-
 
 ## Additional variables
 

@@ -49,6 +49,7 @@ run: check_repo
 		-p 8888:8888 \
 		-v $(REPO_DIR):/home/jovyan/agfalta_tools \
 		--name $(CONT_NAME) \
+		--env JUPYTER_ENABLE_LAB="yes" \
 		$(IMAGE_NAME):$(TAG)
 
 clean:

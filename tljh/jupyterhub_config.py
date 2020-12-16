@@ -74,6 +74,7 @@ def get_docker_tags(repo_name):
     return contents["tags"]
 
 # pylint: disable=undefined-variable
+### General config
 c.JupyterHub.hub_ip = public_ips()[0]
 c.JupyterHub.cleanup_servers = False
 c.JupyterHub.services = [{
@@ -84,10 +85,14 @@ c.JupyterHub.services = [{
     ]
 }]
 
+### Spawner config
 c.JupyterHub.spawner_class = MyDockerSpawner
+
 c.Spawner.default_url = "/lab"
 c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
+c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
+
 c.DockerSpawner.image_whitelist = dict(
     (tag, f"localhost:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
@@ -101,6 +106,7 @@ c.DockerSpawner.volumes = {
 c.DockerSpawner.pull_policy = "always"
 c.DockerSpawner.remove = True
 
+### Authenticator config
 c.JupyterHub.authenticator_class = LocalFirstUseAuthenticator
 c.FirstUseAuthenticator.create_users = False
 c.LocalAuthenticator.create_system_users = True

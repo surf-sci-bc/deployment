@@ -1,5 +1,5 @@
-NAME        ?= agfalta_tools-dev
-DOCKER_NAME ?= agfalta_tools_devJL
+IMAGE_NAME  ?= agfalta_tools-dev
+CONT_NAME   ?= agfalta_tools_devJL
 TAG          = latest
 VERSION     ?= HEAD
 
@@ -34,11 +34,11 @@ gettag: FORCE
 # This also populates the repo_location.txt file
 build: $(REPO_DIR) check_repo gettag
 	docker build \
-		-t $(NAME):$(TAG) \
-		-t $(NAME):latest \
+		-t $(IMAGE_NAME):$(TAG) \
+		-t $(IMAGE_NAME):latest \
 		-f $(CURDIR)/Dockerfile \
 		$(REPO_DIR)
-	@echo "\033[94m### built docker image \"$(NAME):$(TAG)\"\033[0m"
+	@echo "\033[94m### built docker image \"$(IMAGE_NAME):$(TAG)\"\033[0m"
 	@if [ $(REPO_DIR) != agfalta_tools ]; \
 		then echo "$(REPO_DIR)" > repo_location.txt; \
 	fi
@@ -48,8 +48,8 @@ run: check_repo
 	    --rm \
 		-p 8888:8888 \
 		-v $(REPO_DIR):/home/jovyan/agfalta_tools \
-		--name $(DOCKER_NAME) \
-		$(NAME):$(TAG)
+		--name $(CONT_NAME) \
+		$(IMAGE_NAME):$(TAG)
 
 clean:
 	rm -rf agfalta_tools

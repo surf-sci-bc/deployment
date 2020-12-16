@@ -25,7 +25,7 @@ Do this from the `deployment` directory:
 $ make dev-build
 ```
 
-This creates a new git repo copy of `agfalta_tools` in `deployment/dev/`. You can edit it there and changes are reflected directly in your running jupyterlab (see [below](#Set sails)).
+This creates a new git repo copy of `agfalta_tools` in `deployment/dev/` and then builds a docker container with that version installed. You can edit it there and changes are reflected directly in your running jupyterlab (see [below](#set-sails)).
 
 ### Use an existing copy of `agfalta_tools`
 
@@ -65,3 +65,12 @@ $ make dev-run
 You can now access the container by the link that is given in the terminal. `agfalta_tools` is mounted from the projects folder, so changes to `agfalta_tools` are directly affecting the development environment inside the container and vice versa.
 
 _Note:_ If you want to use JupyterLab instead of Jupyter notebook, change the last part of the URL from `tree` to `lab`.
+
+
+## Additional variables
+
+For the relevant commands, some values can be changed from the command line (like with `REPO_DIR`):
+
+* `IMAGE_NAME`: The name of the docker image. Defaults to `agfalta_tools-dev` (relevant for build and run)
+* `CONT_NAME`: Name of the container that the run target creates (it is destroyed automatically after stopping). Defaults to `agfalta_tools_devJL`
+* `VERSION`: Version of `agfalta` as a git reference. Defaults to `HEAD`

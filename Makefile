@@ -5,8 +5,11 @@ update: docker tljh-refresh
 docker:
 	$(MAKE) -C docker
 
-dev:
-	$(MAKE) -C dev
+dev-build:
+	$(MAKE) -C dev build
+	
+dev-run:
+	$(MAKE) -C dev run
 
 tljh-config:
 	$(MAKE) -C tljh configure
@@ -14,4 +17,4 @@ tljh-config:
 tljh-refresh:
 	$(MAKE) -C tljh refresh-config
 
-.PHONY: docker
+.PHONY: docker dev-build dev-run tljh-config tljh-refresh

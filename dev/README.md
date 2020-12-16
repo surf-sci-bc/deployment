@@ -1,51 +1,67 @@
 # Development
 
-Following this approach development is done by creating a docker container, that
-uses a editable install of the ```agfalta_tools```, while mounting the ```agfalta_tools```
-folder from the hosts project folder.
+Use this to do development in a (local) docker container that uses an editable install of ```agfalta_tools``` that is mounted from your project folder.
 
 ## Preparation
 
-Get a working Docker installation. Refer to the install guidelines in ```deployment/tljh/README```.
+Get a working Docker installation. Refer to the install guidelines in [this README](../deployment/tljh/README.md).
 
-Clone the ```agfalta_tools``` repository to your projects folder
-```
-cd /path/to/projects
-git clone git@github.com:surf-sci-bc/agfalta_tools.git
-```
-
-To develop the ```agfalta_tools``` package clone the ```deployment``` repository
-or download the ```deployment/dev``` to another directory:
+Clone this `deployment` repository and `cd` into it:
 
 ```
-cd /other/directory (eg. parent directory of agfalta_tools)
-git clone git@github.com:surf-sci-bc/deployment.git
-cd deployment/dev/
+$ git clone git@github.com:surf-sci-bc/deployment.git
+$ cd deployment/
 ```
-Copy ```.dockerignore``` to your ```agfalta_tools``` folder, as the a```agfalta_tools``` will
-be the build context of the docker image. You can adapt it to your pleasure, but
-it should at least contain the ```.git``` folder.
+
+## Build the docker image
+
+Use either one of the following subsections, not both.
+
+### Automatically download a new copy of `agfalta_tools`
+
+Do this from the `deployment` directory:
 
 ```
-cp .dockerignore /path/to/projects/agfalta_tools/.dockerignore
+$ make dev-build
 ```
-You can also copy the Dockerfile and Makefile to the same directory. Then you
-have to add ```Dockerfile``` and ```Makefile``` to .dockerignore  
 
-Edit the Makefile and change ```REPO_DIR``` to your agfalta_tools folder. If you copied
-```Dockerfile```, ```Makefile``` and ```.dockerignore``` you can set
-```REPO_DIR = .```
+This creates a new git repo copy of `agfalta_tools` in `deployment/dev/`. You can edit it there and changes are reflected directly in your running jupyterlab (see [below](#Set sails)).
+
+### Use an existing copy of `agfalta_tools`
+
+If you have not done this yet, clone the `agfalta_tools` repository to your projects folder
+
+```
+$ cd /path/to/projects
+$ git clone git@github.com:surf-sci-bc/agfalta_tools.git
+```
+
+To make the image smaller, copy `deployment/dev/.dockerignore` to your `agfalta_tools` folder because that will be the build context of the docker image. You can adapt it to your pleasure, but
+it should at least contain the `.git` folder.
+
+```
+$ cp .dockerignore /path/to/projects/agfalta_tools/.dockerignore
+```
+
+Now you can build the image (from the `deployment` directory):
+
+```
+$ make REPO_DIR=/path/to/projects/agfalta_tools dev-build
+```
+
+This will take a short while, but only has to be performed once unless the `Dockerfile` is changed or new requirements have to be installed. 
+
+_Note:_ this will write your `REPO_DIR` path into the file `deployment/dev/repo_location.txt` to use it in all further commands. If you wish to change the `agfalta_tools` location, either repeat above command with another path or delete the `repo_location.txt` file. If the path will stay the same, you can omit that parameter and just write `$ make dev-build` from now on.
+
 
 ## Set sails
 
-Build the image by
-```
-make build
-```
-This will take a while, but only has to be performed once unless the ```Dockerfile``` is changed or new requirements have to be installed.
+Run the container (from the `deployment` directory) with:
 
-Run the container by
 ```
-make run
+$ make dev-run
 ```
-You can now access the container by the link that is given in the terminal. The ```agfalta_tools``` are mounted form the projects folder, so changes to the ```agfalta_tools``` are directly affecting the development environment inside the container and vice versa.
+
+You can now access the container by the link that is given in the terminal. `agfalta_tools` is mounted from the projects folder, so changes to `agfalta_tools` are directly affecting the development environment inside the container and vice versa.
+
+_Note:_ If you want to use JupyterLab instead of Jupyter notebook, change the last part of the URL from `tree` to `lab`.

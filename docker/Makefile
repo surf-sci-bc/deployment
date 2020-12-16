@@ -1,6 +1,6 @@
-NAME		:= localhost:5000/agfalta_tools
+NAME		?= localhost:5000/agfalta_tools
 TAG			 = latest
-VERSION := HEAD
+VERSION     ?= HEAD
 
 all: build push clean
 

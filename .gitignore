@@ -1,3 +1,5 @@
 *.md.backup
 
 docker/agfalta_tools
+dev/agfalta_tools
+dev/repo_location.txt

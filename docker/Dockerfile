@@ -5,7 +5,7 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:399cbb986c6b
 
 FROM $BASE_CONTAINER
 
-ARG JUPYTERHUB_VERSION=1.1.0
+ARG JUPYTERHUB_VERSION=1.2.2
 #RUN python3 -m pip install --upgrade --no-cache-dir jupyterhub==$JUPYTERHUB_VERSION
 
 USER root

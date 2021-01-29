@@ -1,11 +1,11 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:399cbb986c6b
+ARG BASE_CONTAINER=jupyter/minimal-notebook:5cb007f03275
 # History
 # 07.12.2020 | 399cbb986c6b
-#
+# 29.01.2021 | 5cb007f03275
 
 FROM $BASE_CONTAINER
 
-ARG JUPYTERHUB_VERSION=1.1.0
+ARG JUPYTERHUB_VERSION=1.2.2
 #RUN python3 -m pip install --upgrade --no-cache-dir jupyterhub==$JUPYTERHUB_VERSION
 
 USER root
@@ -18,21 +18,12 @@ RUN apt-get update && \
 USER $NB_UID
 
 RUN conda install --quiet --yes \
-    'ipywidgets=7.5.*' \
-    'ipympl=0.5.*'\
+    'ipywidgets=7.6.*' \
+    'ipympl=0.6.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
     'matplotlib-base=3.3.*' \
     && \
     conda clean --all -f -y && \
-    # Check this URL for most recent compatibilities
-    # https://github.com/jupyter-widgets/ipywidgets/tree/master/packages/jupyterlab-manager
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager@^2.0.0 --no-build && \
-    jupyter labextension install jupyter-matplotlib@^0.7.2 --no-build && \
-    jupyter lab build -y && \
-    jupyter lab clean -y && \
-    npm cache clean --force && \
-    rm -rf "/home/${NB_USER}/.cache/yarn" && \
-    rm -rf "/home/${NB_USER}/.node-gyp" && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 

@@ -5,7 +5,7 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:5cb007f03275
 
 FROM $BASE_CONTAINER
 
-ARG JUPYTERHUB_VERSION=1.2.2
+ARG JUPYTERHUB_VERSION=1.3.0
 #RUN python3 -m pip install --upgrade --no-cache-dir jupyterhub==$JUPYTERHUB_VERSION
 
 USER root
@@ -45,3 +45,5 @@ RUN python3 -m pip install --no-cache-dir /tmp/agfalta_tools/. && \
     fix-permissions "/home/${NB_USER}"
 
 WORKDIR $HOME
+
+EXPOSE 8888

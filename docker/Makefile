@@ -5,7 +5,7 @@ VERSION     ?= HEAD
 all: build push clean
 
 agfalta_tools:
-	git clone git@github.com:surf-sci-bc/agfalta_tools.git
+	git clone https://github.com/surf-sci-bc/agfalta_tools.git
 	git -C agfalta_tools checkout $(VERSION)
 
 gettag: agfalta_tools FORCE

@@ -1,16 +1,51 @@
-# Deploy Jupyterhub with docker
+# Deploy fully containerized Jupyterhub with Docker
 
-Deploying Jupyterhub inside a docker container, it is possible to get an almost stateless configuration, that can be deployed and updated with only a few commands.
+By Jupyterhub inside a docker container, it is possible to get an almost stateless configuration, that can be deployed and updated with only a few commands.
+
+## Install Docker
+Because TLJH is supposed to run the single-user servers inside docker containers, docker needs to be installed on the host
+````
+sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt update && sudo apt install -y docker-ce
+````
+This adds the docker repository to apt, adds the key and installs the docker community edition.
+
+### Add user to docker group
+To run docker without using sudo, the user has to added to the docker group (which has to be created first when not already present). Note granting a user sudoless docker permission is equivalent to granting root permission to this user.
+````
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+newgrp docker
+````
+The installation can be checked by:
+````
+ docker run hello-world
+````
+which should yield a hello world message.
+
+## Install docker-compose
+
+Execute the following commands.
+
+```sh
+sudo curl -L "https://github.com/docker/compose/releases/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
 
 ## Create a Notebook user
 
 Because the Hub is running inside container using its own user managment, it is difficult to create users on the host from inside the container.
-However, by mounting ```/etc/passwd/``` in the container, the Hub is aware of the hosts users, is able to spawn the lab-containers with the right permissions. This means that the lab-users have to be already existant on host at hub startup. Using the ```add_user``` script, creates the users with the neccessary configuration
+However, by mounting ```/etc/passwd/``` in the container, the Hub is aware of the hosts users and is able to spawn the lab-containers with the right permissions. This also means that the lab-users have to be already existant on host at hub startup. Using the ```add_user``` script, creates the users with the neccessary configuration
 
 ```
 ./add_user.sh <user-name-in-hub>
 ```
-The user will be created as ```jupyter-<user-name-in-hub >```. Still for the hub ```<user-name-in-hub>``` is neccessary as normalisation of the username is done during authentication. The allowed users are determined by the presence of ```jupyter-*```-folder in ```/home/``` at startup of the hub. After creation of a new user the hub has to be restarted.
+The user will be created as ```jupyter-<user-name-in-hub >```. Still for the hub ```<user-name-in-hub>``` is neccessary as normalisation of the username is done during authentication. The allowed users are determined by the presence of ```jupyter-*```-folder in ```/home/``` at startup of the hub. After creation of a new user the hub has to be restarted. By
+````
+docker-compose restart
+````
 
 ## Build Jupyterlab Image
 
@@ -37,6 +72,12 @@ cd deployment/docker
 docker build -t localhost:5000/agfalta_tools:<TAG> .
 docker push localhost:5000/agfalta_tools:<TAG>
 ```
+
+Alternativly, use the
+```
+make docker
+```
+in the parent direcotry. This takes care of everything.
 
 ## Have fun.
 

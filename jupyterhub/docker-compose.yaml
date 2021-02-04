@@ -14,15 +14,12 @@ services:
     image: agfalta/jupyterhub
     ports: 
       - 8000:8000
-      - 8099:8099
+      - 8099:8099 # Traefik dashboard
     depends_on:
       - "registry"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/etc/passwd:/etc/passwd"
-      - "/etc/group:/etc/group"
-      - "/etc/shadow:/etc/shadow"
-      - "/etc/pam.d/:/etc/pam.d/"
       - "/home/:/home/"
       - jupyterhub_data:/srv/jupyterhub/password
     # Ensure containers spawned by dockerspawner can communicate with hub

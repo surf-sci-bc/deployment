@@ -1,19 +1,22 @@
-"""
-This goes into
-/opt/tljh/config/jupyterhub_config.d/
-"""
 # pylint: disable=missing-docstring
 # pylint: disable=import-error
+
+# TODO:
+# - Parse passwd file for users
+# - Add another option to image whitelist, if only one is present
+# - Later: Use LocalFirstUseAuthenticator again
 
 import sys
 import pwd
 import os
-import re
+# import re
+
+import logging as log
 
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator
-from jupyterhub.auth import LocalAuthenticator
-from jupyterhub.auth import PAMAuthenticator
+# from jupyterhub.auth import LocalAuthenticator
+# from jupyterhub.auth import PAMAuthenticator
 
 
 from jupyter_client.localinterfaces import public_ips
@@ -57,26 +60,25 @@ class MyDockerSpawner(SystemUserSpawner):
     #    return self.host_ip, self.port
     
 
-class DummyUser:
-    # pylint: disable=too-few-public-methods
-    def __init__(self, user):
-        self.name = convert_username(user.name)
+# class DummyUser:
+#     # pylint: disable=too-few-public-methods
+#     def __init__(self, user):
+#         self.name = convert_username(user.name)
 
-class LocalFirstUseAuthenticator(FirstUseAuthenticator, LocalAuthenticator):
-    def system_user_exists(self, user):
-        user = DummyUser(user)
-        return super().system_user_exists(user)
+# class LocalFirstUseAuthenticator(FirstUseAuthenticator, LocalAuthenticator):
+#     def system_user_exists(self, user):
+#         user = DummyUser(user)
+#         return super().system_user_exists(user)
 
-    def add_system_user(self, user):
-        user = DummyUser(user)
-        self.log.info(user)
-        return super().add_system_user(user)
+#     def add_system_user(self, user):
+#         user = DummyUser(user)
+#         self.log.info(user)
+#         return super().add_system_user(user)
 
-class MyPAMAuthenticator(PAMAuthenticator):
-    def normalize_username(self, username):
-        self.log.info(convert_username(username))
-        return convert_username(username)
-        #return f"jupyter-{username}"
+# class MyPAMAuthenticator(PAMAuthenticator):
+#     def normalize_username(self, username):
+#         self.log.info(convert_username(username))
+#         return convert_username(username)
 
 
 def get_docker_tags(repo_name):
@@ -87,6 +89,8 @@ def get_docker_tags(repo_name):
         return ["latest"]
     req = requests.get(f"http://registry:5000/v2/{repo_name}/tags/list")
     contents = json.loads(req.content)
+
+    log.info(contents["tags"])
     return contents["tags"]
 
 def get_user_names():
@@ -98,12 +102,8 @@ def get_user_names():
 # pylint: disable=undefined-variable
 ### General config
 #c.JupyterHub.hub_ip = public_ips()[0]
-#c.JupyterHub.hub_ip = '0.0.0.0'  # listen on all interfaces
-#c.JupyterHub.hub_ip = '10.0.1.4'
 c.JupyterHub.hub_ip = ''
-#c.JupyterHub.hub_connect_ip = 'jupyterhub'
-#c.DockerSpawner_host.use_internal_ip = False
-#c.JupyterHub.ip = ''
+
 c.JupyterHub.cleanup_servers = False
 c.JupyterHub.services = [{
     "name": "cull-idle", "admin": True, "command": [
@@ -123,10 +123,17 @@ c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
 
-c.DockerSpawner.image_whitelist = dict(
-    (tag, f"localhost:5000/agfalta_tools:{tag}")
+c.MyDockerSpawner.image_whitelist = dict(
+    (tag, f"registry:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )
+#c.MyDockerSpawner.image_whitelist = {"A":"localhost:5000/agfalta_tools:latest"}
+
+# log.warn(dict(
+#     (tag, f"registry:5000/agfalta_tools:{tag}")
+#     for tag in get_docker_tags("agfalta_tools")
+# ))
+
 c.DockerSpawner.volumes = {
     "/home/agfalta/public": {"bind": "/home/jupyter-{username}/public", "mode": "rw"},
     "/mnt/analysis/jupyter-labbooks": {"bind": "/home/jupyter-{username}/labbooks", "mode": "rw"},
@@ -146,7 +153,7 @@ c.LocalAuthenticator.create_system_users = False
 c.JupyterHub.proxy_class = TraefikTomlProxy
 c.TraefikTomlProxy.traefik_api_username = "admin"
 c.TraefikTomlProxy.traefik_api_password = "admin"
-c.TraefikTomlProxy.traefik_api_url = "http://jupyterhub:8099"
+#c.TraefikTomlProxy.traefik_api_url = "http://192.168.201.4:8099"
 c.TraefikTomlProxy.traefik_log_level = "INFO"
 
 ### Admin User

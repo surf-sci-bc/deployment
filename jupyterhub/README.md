@@ -23,7 +23,7 @@ docker build -t agfalta/jupyterhub .
 
 Jupyterhub is started by using docker-compose in the same folder as the ```docker-compose.yaml``` file:
 ```
-sudo docker-compose -d
+sudo docker-compose -d up
 ```
 This file takes care of all neccessary configuraiton, including networking, volumes and bindmounts. Next to the Jupyterhub it also deploys a registry container. That the agfalta_tools images can be pushed to, so they are spawnable by the hub.  
   

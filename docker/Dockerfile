@@ -45,5 +45,3 @@ RUN python3 -m pip install --no-cache-dir /tmp/agfalta_tools/. && \
     fix-permissions "/home/${NB_USER}"
 
 WORKDIR $HOME
-
-EXPOSE 8888

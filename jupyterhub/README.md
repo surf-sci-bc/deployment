@@ -14,17 +14,22 @@ The user will be created as ```jupyter-<user-name-in-hub >```. Still for the hub
 
 ## Build Jupyterlab Image
 
+First, install [docker](https://docs.docker.com/engine/install/ubuntu/) and [docker-compose](https://docs.docker.com/compose/install/) according to their doc (just click the links).
+
 Build the image for the jupyterlab container within the work directory:
-````
+
+```
 docker build -t agfalta/jupyterhub .
-````
+```
 
 ## Start Jupyterhub
 
 Jupyterhub is started by using docker-compose in the same folder as the ```docker-compose.yaml``` file:
+
 ```
-sudo docker-compose -d up
+sudo docker-compose up -d
 ```
+
 This file takes care of all neccessary configuraiton, including networking, volumes and bindmounts. Next to the Jupyterhub it also deploys a registry container. That the agfalta_tools images can be pushed to, so they are spawnable by the hub.  
   
 The Hub utilizes the FirstUseAuthenicator for Authentication. This means, that the password is set while logging in for the first time. The passwords and the registry data is persistent.
@@ -32,10 +37,10 @@ The Hub utilizes the FirstUseAuthenicator for Authentication. This means, that t
 ## Push to registry
 
 Push an image to the registry by tagging it with the registry ```ip``` and ```port```. Choose the ```<TAG>``` accoarding to the ```agfalta_tools``` version beeing built.
+
 ```
-cd deployment/docker
-docker build -t localhost:5000/agfalta_tools:<TAG> .
-docker push localhost:5000/agfalta_tools:<TAG>
+cd deployment
+make docker
 ```
 
 ## Have fun.

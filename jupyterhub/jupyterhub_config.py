@@ -9,23 +9,21 @@
 import sys
 import pwd
 import os
-# import re
-
 import logging as log
 
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator
 # from jupyterhub.auth import LocalAuthenticator
-# from jupyterhub.auth import PAMAuthenticator
-
-
 from jupyter_client.localinterfaces import public_ips
 from tornado import gen
 
 from jupyterhub_traefik_proxy import TraefikTomlProxy
 
+
+
 def convert_username(user_name):
     return f"jupyter-{user_name}"
+
 
 class MyDockerSpawner(SystemUserSpawner):
     def get_env(self):
@@ -55,9 +53,6 @@ class MyDockerSpawner(SystemUserSpawner):
         self.log.info(f"Pulling image {repo}:{tag}...")
         yield self.docker('pull', repo, tag)
         return
-    #@gen.coroutine
-    #def get_ip_and_port(self):
-    #    return self.host_ip, self.port
     
 
 # class DummyUser:
@@ -74,11 +69,6 @@ class MyDockerSpawner(SystemUserSpawner):
 #         user = DummyUser(user)
 #         self.log.info(user)
 #         return super().add_system_user(user)
-
-# class MyPAMAuthenticator(PAMAuthenticator):
-#     def normalize_username(self, username):
-#         self.log.info(convert_username(username))
-#         return convert_username(username)
 
 
 def get_docker_tags(repo_name):
@@ -99,11 +89,11 @@ def get_user_names():
     return [item.split("-")[1] for item in directory_contents if os.path.isdir("/home/"+item) and "jupyter-" in item]
 
 
+
 # pylint: disable=undefined-variable
 ### General config
-#c.JupyterHub.hub_ip = public_ips()[0]
 c.JupyterHub.hub_ip = ''
-
+network_name = os.environ['DOCKER_NETWORK_NAME']
 c.JupyterHub.cleanup_servers = False
 c.JupyterHub.services = [{
     "name": "cull-idle", "admin": True, "command": [
@@ -114,51 +104,39 @@ c.JupyterHub.services = [{
 }]
 
 ### Spawner config
-network_name = os.environ['DOCKER_NETWORK_NAME']
-c.DockerSpawner.network_name = network_name
-
 c.JupyterHub.spawner_class = MyDockerSpawner
+c.DockerSpawner.network_name = network_name
 c.Spawner.default_url = "/lab"
 c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
-
 c.MyDockerSpawner.image_whitelist = dict(
     (tag, f"registry:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )
-#c.MyDockerSpawner.image_whitelist = {"A":"localhost:5000/agfalta_tools:latest"}
-
-# log.warn(dict(
-#     (tag, f"registry:5000/agfalta_tools:{tag}")
-#     for tag in get_docker_tags("agfalta_tools")
-# ))
-
 c.DockerSpawner.volumes = {
-    "/home/agfalta/public": {"bind": "/home/jupyter-{username}/public", "mode": "rw"},
+    "/home/agfalta/public":           {"bind": "/home/jupyter-{username}/public", "mode": "rw"},
     "/mnt/analysis/jupyter-labbooks": {"bind": "/home/jupyter-{username}/labbooks", "mode": "rw"},
-    "/mnt/analysis/demos": {"bind": "/home/jupyter-{username}/demos", "mode": "rw"},
-    "/mnt/data": {"bind": "/home/jupyter-{username}/data", "mode": "ro"}
+    "/mnt/analysis/jupyter-examples": {"bind": "/home/jupyter-{username}/examples", "mode": "ro"},
+    "/mnt/data":                      {"bind": "/home/jupyter-{username}/data", "mode": "ro"}
 }
 c.DockerSpawner.pull_policy = "always"
 c.DockerSpawner.remove = True
 
+
 ### Authenticator config
-c.JupyterHub.authenticator_class = FirstUseAuthenticator #MyLocalAuthenticator #PAMAuthenticator #LocalAuthenticator #FirstUseAuthenticator
+c.JupyterHub.authenticator_class = FirstUseAuthenticator #LocalFirstUseAuthenticator
 FirstUseAuthenticator.dbm_path = "/srv/jupyterhub/password/"
 c.FirstUseAuthenticator.create_users = False
 c.LocalAuthenticator.create_system_users = False
+c.Authenticator.admin_users = {'admin'}
+c.Authenticator.allowed_users = set(name for name in get_user_names())
+
 
 ### Proxy config
 c.JupyterHub.proxy_class = TraefikTomlProxy
 c.TraefikTomlProxy.traefik_api_username = "admin"
 c.TraefikTomlProxy.traefik_api_password = "admin"
-#c.TraefikTomlProxy.traefik_api_url = "http://192.168.201.4:8099"
 c.TraefikTomlProxy.traefik_log_level = "INFO"
 
-### Admin User
-c.Authenticator.admin_users = {'admin'}
-
-### User
-c.Authenticator.allowed_users = set(name for name in get_user_names())
 

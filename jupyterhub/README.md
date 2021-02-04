@@ -43,6 +43,33 @@ cd deployment
 make docker
 ```
 
+## Mount the surfer data network shares
+
+This is needed to access the mounted volumes defined in jupyterhub_config.py.
+Open fstab by `sudo nano /etc/fstab`. Then add this line:
+
+```
+# Add to /etc/fstab
+//192.168.2.99/data   /mnt/data    cifs    credentials=/home/agfalta/.credentials,auto,ro,mfsymlinks   0   0
+//192.168.2.99/analysis /mnt/analysis   cifs    credentials=/home/agfalta/.credentials,auto,rw,mfsymlinks,uid=1000,gid=100,file_mode=0664,dir_mode=0775 0       0
+```
+
+This way, /mnt/data is read-only and belongs to root. /mnt/analysis on the other hand is read-writable by members of the group 100 (users), which is all jupyterhub users. Maybe we should mount the labbook and demos folders separately with different permissions (i.e. only grant "LEEM" and "XPS" user access to the labbooks?).
+
+You need to have the credentials of the data servers samba user in the above mentioned file in this form:
+```
+# /home/agfalta/.credentials
+user=xxx
+password=xxx
+```
+
+Also, install cifs and finally mount the data and analysis folder:
+
+```sh
+$ sudo apt install cifs-utils
+$ sudo mount -a
+```
+
 ## Have fun.
 
 Now it sould be possible to spawn a ```agfalta_tools``` container, with a authenticated user.

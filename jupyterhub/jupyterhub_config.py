@@ -6,12 +6,9 @@
 # - Add another option to image whitelist, if only one is present
 # - Later: Use LocalFirstUseAuthenticator again
 
-# Test
-
 import sys
 import pwd
 import os
-import logging as log
 
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator
@@ -81,7 +78,6 @@ def get_docker_tags(repo_name):
     req = requests.get(f"http://registry:5000/v2/{repo_name}/tags/list")
     contents = json.loads(req.content)
 
-    log.info(contents["tags"])
     return contents["tags"]
 
 def get_user_names():

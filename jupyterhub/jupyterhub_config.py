@@ -14,7 +14,7 @@ import logging as log
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator
 # from jupyterhub.auth import LocalAuthenticator
-from jupyter_client.localinterfaces import public_ips
+# from jupyter_client.localinterfaces import public_ips
 from tornado import gen
 
 from jupyterhub_traefik_proxy import TraefikTomlProxy
@@ -53,7 +53,7 @@ class MyDockerSpawner(SystemUserSpawner):
         self.log.info(f"Pulling image {repo}:{tag}...")
         yield self.docker('pull', repo, tag)
         return
-    
+
 
 # class DummyUser:
 #     # pylint: disable=too-few-public-methods
@@ -84,7 +84,7 @@ def get_docker_tags(repo_name):
     return contents["tags"]
 
 def get_user_names():
-    directory_contents = os.listdir("/home/")    
+    directory_contents = os.listdir("/home/")
     # Check if home directory exists with jupyter prefix
     return [item.split("-")[1] for item in directory_contents if os.path.isdir("/home/"+item) and "jupyter-" in item]
 
@@ -111,7 +111,7 @@ c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
 c.MyDockerSpawner.image_whitelist = dict(
-    (tag, f"registry:5000/agfalta_tools:{tag}")
+    (tag, f"localhost:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )
 c.DockerSpawner.volumes = {
@@ -138,5 +138,3 @@ c.JupyterHub.proxy_class = TraefikTomlProxy
 c.TraefikTomlProxy.traefik_api_username = "admin"
 c.TraefikTomlProxy.traefik_api_password = "admin"
 c.TraefikTomlProxy.traefik_log_level = "INFO"
-
-

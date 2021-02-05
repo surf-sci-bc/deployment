@@ -1,5 +1,7 @@
 # Deploy fully containerized Jupyterhub with Docker
 
+### This is the recommended deployment procedure
+
 By Jupyterhub inside a docker container, it is possible to get an almost stateless configuration, that can be deployed and updated with only a few commands.
 
 ## Install Docker

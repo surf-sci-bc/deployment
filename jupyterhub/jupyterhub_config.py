@@ -6,10 +6,11 @@
 # - Add another option to image whitelist, if only one is present
 # - Later: Use LocalFirstUseAuthenticator again
 
+# Test
+
 import sys
 import pwd
 import os
-# import re
 
 import logging as log
 
@@ -19,7 +20,7 @@ from firstuseauthenticator import FirstUseAuthenticator
 # from jupyterhub.auth import PAMAuthenticator
 
 
-from jupyter_client.localinterfaces import public_ips
+#from jupyter_client.localinterfaces import public_ips
 from tornado import gen
 
 from jupyterhub_traefik_proxy import TraefikTomlProxy
@@ -55,10 +56,6 @@ class MyDockerSpawner(SystemUserSpawner):
         self.log.info(f"Pulling image {repo}:{tag}...")
         yield self.docker('pull', repo, tag)
         return
-    #@gen.coroutine
-    #def get_ip_and_port(self):
-    #    return self.host_ip, self.port
-    
 
 # class DummyUser:
 #     # pylint: disable=too-few-public-methods
@@ -124,7 +121,7 @@ c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
 
 c.MyDockerSpawner.image_whitelist = dict(
-    (tag, f"registry:5000/agfalta_tools:{tag}")
+    (tag, f"localhost:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )
 #c.MyDockerSpawner.image_whitelist = {"A":"localhost:5000/agfalta_tools:latest"}

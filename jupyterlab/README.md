@@ -1,5 +1,7 @@
 # Jupyterlab single server
 
+**This method is deprecated. Refer to deployment/jupyterhub instead.**
+
 This describes the old method of deploying a single jupyterlab server (no hub). The `agfalta_tools` code is pushed to that server directly over git and then an editable install is used.
 
 ## Set up the git repos on the server

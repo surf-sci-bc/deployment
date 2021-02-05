@@ -1,5 +1,9 @@
 # Setting up TLJH on Proxmox
 
+**This method is deprecated. Refer to deployment/jupyterhub instead.**
+
+Also the Dockerimages of agfalta_tools are not compatible anymore, as TLJH uses a lower jupyterhub version.
+
 ## Preparation
 
 Refer to the ````README```` of the Proxmox installation if you want to deploy TLJH on a Proxmox instance.  

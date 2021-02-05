@@ -31,23 +31,17 @@ which should yield a hello world message.
 
 Execute the following commands.
 
-```sh
-sudo curl -L "https://github.com/docker/compose/releases/download/1.28.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-```
+Deploying Jupyterhub inside a docker container, it is possible to get an almost stateless configuration, that can be deployed and updated with only a few commands.
 
 ## Create a Notebook user
 
 Because the Hub is running inside container using its own user managment, it is difficult to create users on the host from inside the container.
-However, by mounting ```/etc/passwd/``` in the container, the Hub is aware of the hosts users and is able to spawn the lab-containers with the right permissions. This also means that the lab-users have to be already existant on host at hub startup. Using the ```add_user``` script, creates the users with the neccessary configuration
+However, by mounting ```/etc/passwd/``` in the container, the Hub is aware of the hosts users, is able to spawn the lab-containers with the right permissions. This means that the lab-users have to be already existant on host at hub startup. Using the ```add_user``` script, creates the users with the neccessary configuration
 
 ```
 ./add_user.sh <user-name-in-hub>
 ```
-The user will be created as ```jupyter-<user-name-in-hub >```. Still for the hub ```<user-name-in-hub>``` is neccessary as normalisation of the username is done during authentication. The allowed users are determined by the presence of ```jupyter-*```-folder in ```/home/``` at startup of the hub. After creation of a new user the hub has to be restarted. By
-````
-docker-compose restart
-````
+The user will be created as ```jupyter-<user-name-in-hub >```. Still for the hub ```<user-name-in-hub>``` is neccessary as normalisation of the username is done during authentication. The allowed users are determined by the presence of ```jupyter-*```-folder in ```/home/``` at startup of the hub. After creation of a new user the hub has to be restarted.
 
 ## Build Jupyterlab Image
 
@@ -80,11 +74,32 @@ cd deployment
 make docker
 ```
 
-Alternativly, use the
+## Mount the surfer data network shares
+
+This is needed to access the mounted volumes defined in jupyterhub_config.py.
+Open fstab by `sudo nano /etc/fstab`. Then add this line:
+
 ```
-make docker
+# Add to /etc/fstab
+//192.168.2.99/data   /mnt/data    cifs    credentials=/home/agfalta/.credentials,auto,ro,mfsymlinks   0   0
+//192.168.2.99/analysis /mnt/analysis   cifs    credentials=/home/agfalta/.credentials,auto,rw,mfsymlinks,uid=1000,gid=100,file_mode=0664,dir_mode=0775 0       0
 ```
-in the parent direcotry. This takes care of everything.
+
+This way, /mnt/data is read-only and belongs to root. /mnt/analysis on the other hand is read-writable by members of the group 100 (users), which is all jupyterhub users. Maybe we should mount the labbook and demos folders separately with different permissions (i.e. only grant "LEEM" and "XPS" user access to the labbooks?).
+
+You need to have the credentials of the data servers samba user in the above mentioned file in this form:
+```
+# /home/agfalta/.credentials
+user=xxx
+password=xxx
+```
+
+Also, install cifs and finally mount the data and analysis folder:
+
+```sh
+$ sudo apt install cifs-utils
+$ sudo mount -a
+```
 
 ## Have fun.
 

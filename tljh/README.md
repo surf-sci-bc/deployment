@@ -77,7 +77,7 @@ Open fstab by `sudo nano /etc/fstab`. Then add this line:
 
 ```
 # Add to /etc/fstab
-//192.168.2.99/data   /home/agfalta/data    cifs    credentials=/home/agfalta/.credentials,auto,ro,mfsymlinks   0   0
+//192.168.2.99/data   /mnt/data    cifs    credentials=/home/agfalta/.credentials,auto,ro,mfsymlinks   0   0
 //192.168.2.99/analysis /mnt/analysis   cifs    credentials=/home/agfalta/.credentials,auto,rw,mfsymlinks,uid=1000,gid=100,file_mode=0664,dir_mode=0775 0       0
 ```
 

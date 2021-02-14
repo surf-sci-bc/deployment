@@ -81,7 +81,7 @@ def get_docker_tags(repo_name):
     contents = json.loads(req.content)
 
     log.info(contents["tags"])
-    return contents["tags"]
+    return sorted(contents["tags"], reverse=True)
 
 def get_user_names():
     directory_contents = os.listdir("/home/")

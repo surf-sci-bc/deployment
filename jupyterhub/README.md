@@ -1,4 +1,35 @@
-# Deploy Jupyterhub with docker
+# Deploy fully containerized Jupyterhub with Docker
+
+### This is the recommended deployment procedure
+
+By Jupyterhub inside a docker container, it is possible to get an almost stateless configuration, that can be deployed and updated with only a few commands.
+
+## Install Docker
+Because TLJH is supposed to run the single-user servers inside docker containers, docker needs to be installed on the host
+````
+sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+sudo apt update && sudo apt install -y docker-ce
+````
+This adds the docker repository to apt, adds the key and installs the docker community edition.
+
+### Add user to docker group
+To run docker without using sudo, the user has to added to the docker group (which has to be created first when not already present). Note granting a user sudoless docker permission is equivalent to granting root permission to this user.
+````
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+newgrp docker
+````
+The installation can be checked by:
+````
+ docker run hello-world
+````
+which should yield a hello world message.
+
+## Install docker-compose
+
+Execute the following commands.
 
 Deploying Jupyterhub inside a docker container, it is possible to get an almost stateless configuration, that can be deployed and updated with only a few commands.
 

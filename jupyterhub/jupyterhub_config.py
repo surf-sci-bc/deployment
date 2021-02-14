@@ -9,7 +9,6 @@
 import sys
 import pwd
 import os
-import logging as log
 
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator
@@ -54,7 +53,6 @@ class MyDockerSpawner(SystemUserSpawner):
         yield self.docker('pull', repo, tag)
         return
 
-
 # class DummyUser:
 #     # pylint: disable=too-few-public-methods
 #     def __init__(self, user):
@@ -82,6 +80,7 @@ def get_docker_tags(repo_name):
 
     log.info(contents["tags"])
     return sorted(contents["tags"], reverse=True)
+
 
 def get_user_names():
     directory_contents = os.listdir("/home/")

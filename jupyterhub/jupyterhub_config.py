@@ -77,10 +77,7 @@ def get_docker_tags(repo_name):
         return ["latest"]
     req = requests.get(f"http://registry:5000/v2/{repo_name}/tags/list")
     contents = json.loads(req.content)
-
-    log.info(contents["tags"])
     return sorted(contents["tags"], reverse=True)
-
 
 def get_user_names():
     directory_contents = os.listdir("/home/")

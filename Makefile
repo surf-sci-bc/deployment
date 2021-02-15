@@ -1,9 +1,12 @@
 # calls the subdirectories' makefiles
 
-update: docker tljh-refresh
+update: docker jh-restart
 
 docker:
 	$(MAKE) -C docker
+	
+jh-restart:
+	$(MAKE) -C jupyterhub restart
 
 dev-build:
 	$(MAKE) -C dev build
@@ -11,10 +14,6 @@ dev-build:
 dev-run:
 	$(MAKE) -C dev run
 
-tljh-config:
-	$(MAKE) -C tljh configure
 
-tljh-refresh:
-	$(MAKE) -C tljh refresh-config
+.PHONY: update docker jh-restart dev-build dev-run
 
-.PHONY: docker dev-build dev-run tljh-config tljh-refresh

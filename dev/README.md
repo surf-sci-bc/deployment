@@ -4,7 +4,7 @@ Use this to do development in a (local) docker container that uses an editable i
 
 ## Preparation
 
-Get a working Docker installation. Refer to the install guidelines in [this README](../deployment/tljh/README.md).
+Get a working Docker installation. Refer to the install guidelines in [this README](../deployment/jupyterhub/README.md).
 
 Clone this `deployment` repository and `cd` into it:
 
@@ -36,16 +36,10 @@ $ cd /path/to/projects
 $ git clone git@github.com:surf-sci-bc/agfalta_tools.git
 ```
 
-To make the image smaller, copy `deployment/dev/.dockerignore` to your `agfalta_tools` folder because that will be the build context of the docker image. You can adapt it to your pleasure, but
-it should at least contain the `.git` folder.
-
-```
-$ cp .dockerignore /path/to/projects/agfalta_tools/.dockerignore
-```
-
 Now you can build the image (from the `deployment` directory):
 
 ```
+$ cd path/to/deployment
 $ make REPO_DIR=/path/to/projects/agfalta_tools dev-build
 ```
 
@@ -59,10 +53,11 @@ _Note:_ this will write your `REPO_DIR` path into the file `deployment/dev/repo_
 Run the container (from the `deployment` directory) with:
 
 ```
+$ cd path/to/deployment
 $ make dev-run
 ```
 
-You can now access the container by the link that is given in the terminal. `agfalta_tools` is mounted from the projects folder, so changes to `agfalta_tools` are directly affecting the development environment inside the container and vice versa.
+You can now access the container by the last link that is given in the terminal. `agfalta_tools` is mounted from the projects folder, so changes to `agfalta_tools` are directly affecting the development environment inside the container and vice versa.
 
 
 ## Additional variables

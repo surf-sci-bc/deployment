@@ -104,3 +104,27 @@ $ sudo mount -a
 ## Have fun.
 
 Now it sould be possible to spawn a ```agfalta_tools``` container, with a authenticated user.
+
+
+## Removing old images from the registry
+
+Show current images stored in the registry:
+
+```sh
+curl -v -X GET localhost:5000/v2/agfalta_tools/tags/list
+```
+
+To delete a tag, you must know the corresponding digest. If it is still on the local machine from building, you can find the digest by using `docker image ls --digests`. Else you have to look at the output from `curl -v -X GET localhost:5000/v2/agfalta_tools/manifests/{tag}`.
+
+The digest has the form `sha256:123123123123123...`. Delete the digest like this:
+
+```sh
+curl -v -X DELETE localhost:5000/v2/agfalta_tools/manifests/{digest}
+```
+
+Then, to get rid of the superfluous blobs, invoke the garbage collector:
+
+```sh
+docker exec jupyterhub_registry_1 registry garbage-collect /etc/docker/registry/config.yml
+```
+

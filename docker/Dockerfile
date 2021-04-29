@@ -12,7 +12,7 @@ USER root
 
 # ffmpeg for matplotlib anim & dvipng+cm-super for latex labels
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super && \
+    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super quantum-espresso && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
@@ -22,6 +22,7 @@ RUN conda install --quiet --yes \
     'ipympl=0.6.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
     'matplotlib-base=3.3.*' \
+    'gpaw' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
@@ -45,3 +46,4 @@ RUN python3 -m pip install --no-cache-dir /tmp/agfalta_tools/. && \
     fix-permissions "/home/${NB_USER}"
 
 WORKDIR $HOME
+

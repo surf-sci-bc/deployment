@@ -37,6 +37,8 @@ RUN MPLBACKEND=Agg python3 -c "import matplotlib.pyplot" && \
 #-------------------------
 # Make changes below this line to avoid cache busting
 
+ENV GPAW_SETUP_PATH="/usr/local/share/gpaw_potentials"
+
 # currently relies on agfalta_tools being in the same directory as the Dockerfile
 COPY --chown=${NB_UID}:${NB_GID} agfalta_tools /tmp/agfalta_tools
 

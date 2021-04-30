@@ -8,4 +8,4 @@ echo -e "make sure that the potentials are installed to \"${GPAW_PATH}\" from ea
 for hp in /home/jupyter-*; do
     mkdir -p "${hp}/.gpaw"
     cp rc.py "${hp}/.gpaw/"
-
+done

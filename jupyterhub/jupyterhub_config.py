@@ -121,7 +121,7 @@ c.DockerSpawner.volumes = {
     "/home/agfalta/public":           {"bind": "/home/jupyter-{username}/public", "mode": "rw"},
     "/mnt/analysis/jupyter-labbooks": {"bind": "/home/jupyter-{username}/labbooks", "mode": "rw"},
     "/mnt/analysis/jupyter-examples": {"bind": "/home/jupyter-{username}/examples", "mode": "ro"},
-    "/mnt/analysis":                  {"bind": "/home/jupyter-{username}/surfer-analysis", "mode", "rw"}
+    "/mnt/analysis":                  {"bind": "/home/jupyter-{username}/surfer-analysis", "mode", "rw"},
     "/mnt/data":                      {"bind": "/home/jupyter-{username}/data", "mode": "ro"},
 }
 c.DockerSpawner.pull_policy = "always"

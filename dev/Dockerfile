@@ -37,7 +37,7 @@ RUN MPLBACKEND=Agg python3 -c "import matplotlib.pyplot" && \
 #-------------------------
 # Make changes below this line to avoid cache busting
 
-ENV GPAW_SETUP_PATH="$HOME/surfer-analysis/jupyter-data/gpaw_potentials"
+ENV GPAW_SETUP_PATH="/home/${NB_USER}/surfer-analysis/jupyter-data/gpaw_potentials"
 
 WORKDIR $HOME
 

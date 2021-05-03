@@ -1,7 +1,8 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:5cb007f03275
+ARG BASE_CONTAINER=jupyter/minimal-notebook:584f43f06586
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
+# 27.04.2021 | 584f43f06586
 
 FROM $BASE_CONTAINER
 
@@ -19,9 +20,9 @@ USER $NB_UID
 
 RUN conda install --quiet --yes \
     'ipywidgets=7.6.*' \
-    'ipympl=0.6.*'\
+    'ipympl=0.7.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
-    'matplotlib-base=3.3.*' \
+    'matplotlib-base=3.4.*' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \

@@ -37,22 +37,6 @@ class MyDockerSpawner(SystemUserSpawner):
     def _group_id_default(self):
         return pwd.getpwnam(convert_username(self.user.name)).pw_gid
 
-    @gen.coroutine
-    def pull_image(self, image):
-        """
-        For some reason this is neccesarry. Dont ask me why. It just overrides
-        the pull always behavor of dockerspawner but it seems to be neccessary.
-        """
-        if ':' in image.split("/")[-1]:
-            # rsplit splits from right to left, allowing to have a custom image repo with port
-            repo, tag = image.rsplit(':', 1)
-        else:
-            repo = image
-            tag = 'latest'
-        self.log.info(f"Pulling image {repo}:{tag}...")
-        yield self.docker('pull', repo, tag)
-        return
-
 # class DummyUser:
 #     # pylint: disable=too-few-public-methods
 #     def __init__(self, user):
@@ -113,7 +97,8 @@ c.Spawner.default_url = "/lab"
 c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
-c.MyDockerSpawner.image_whitelist = dict(
+c.SystemUserSpawner.run_as_root = True
+c.MyDockerSpawner.allowed_images = dict(
     (tag, f"localhost:5000/agfalta_tools:{tag}")
     for tag in get_docker_tags("agfalta_tools")
 )

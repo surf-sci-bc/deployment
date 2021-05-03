@@ -34,3 +34,11 @@ $ make update
 If you want to apply changes to the JH config, first follow the instructions from the last paragraph except for the last command. Then, do `$ make jh-restart` instead of update. This rebuilds the JH container, restarts it and the docker registry.
 
 
+## GPAW and quantum-espresso
+
+Both packages are installed in the jupyterhub image. For more information see the [gpaw](https://wiki.fysik.dtu.dk/gpaw/index.html) and [QUANTUMESPRESSO](https://www.quantum-espresso.org/) websites. 
+
+The dependencies for both can be complicated, but QE is available through `apt`. For gpaw, the pseudopotential data needs to be downloaded via `gpaw install-data <dir>` (see [here](https://wiki.fysik.dtu.dk/gpaw/install.html)). In the single user JupyterHub containers, it is located in `$HOME/surfer-analysis/jupyter-data/gpaw_potentials`. In the current setup, `$HOME/surfer-analysis/` points to the surfer's mounted analysis directory (`/mnt/analysis`).
+
+To set this up, you have to execute `jupyterhub/gpaw/install_gpaw.sh`. It places a `rc.py` in each user's `$HOME/.gpaw` directory so that gpaw actually knows the correct path.
+

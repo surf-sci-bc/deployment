@@ -1,7 +1,8 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:5cb007f03275
+ARG BASE_CONTAINER=jupyter/minimal-notebook:584f43f06586
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
+# 27.04.2021 | 584f43f06586
 
 FROM $BASE_CONTAINER
 
@@ -12,16 +13,17 @@ USER root
 
 # ffmpeg for matplotlib anim & dvipng+cm-super for latex labels
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super && \
+    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super quantum-espresso && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
 
 RUN conda install --quiet --yes \
+    'gpaw' \
     'ipywidgets=7.6.*' \
-    'ipympl=0.6.*'\
+    'ipympl=0.7.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
-    'matplotlib-base=3.3.*' \
+    'matplotlib-base=3.4.*' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
@@ -38,9 +40,11 @@ RUN MPLBACKEND=Agg python3 -c "import matplotlib.pyplot" && \
 
 WORKDIR $HOME
 
+# currently relies on agfalta_tools being in the same directory as the Dockerfile
 COPY --chown=${NB_UID}:${NB_GID} . agfalta_tools
 
 RUN python3 -m pip install -e agfalta_tools/. && \
     rm -rf agfalta_tools/* && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
+

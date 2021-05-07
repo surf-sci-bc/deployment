@@ -1,13 +1,14 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:584f43f06586
+ARG BASE_CONTAINER=jupyter/minimal-notebook:09fb66007615
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
 # 27.04.2021 | 584f43f06586
+# 07.05.2021 | 09fb66007615
 
 FROM $BASE_CONTAINER
 
-ARG JUPYTERHUB_VERSION=1.3.0
-#RUN python3 -m pip install --upgrade --no-cache-dir jupyterhub==$JUPYTERHUB_VERSION
+# Jupyterhub version has to match version inside the jupyterhub dockerfile
+ARG JUPYTERHUB_VERSION=1.4.0
 
 USER root
 
@@ -19,7 +20,7 @@ RUN apt-get update && \
 USER $NB_UID
 
 RUN conda install --quiet --yes \
-    'gpaw' \
+    'gpaw=21.1.*' \
     'ipywidgets=7.6.*' \
     'ipympl=0.7.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \

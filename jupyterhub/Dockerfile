@@ -1,4 +1,4 @@
-FROM jupyterhub/jupyterhub:1.3.0
+FROM jupyterhub/jupyterhub:1.4.0
 
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install jupyterhub-traefik-proxy==0.2.0 && \

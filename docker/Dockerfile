@@ -7,28 +7,51 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:09fb66007615
 
 FROM $BASE_CONTAINER
 
-# Jupyterhub version has to match version inside the jupyterhub dockerfile
+# Jupyterhub version must match version inside the jupyterhub/Dockerfile
 ARG JUPYTERHUB_VERSION=1.4.0
 
 USER root
 
-# ffmpeg for matplotlib anim & dvipng+cm-super for latex labels
+# ffmpeg for matplotlib anim & dvipng+cm-super for latex labels, gfortran for DFT packages
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super quantum-espresso && \
+    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super gfortran && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install AQuaLEED
+
+WORKDIR /usr/local/src
+
+RUN wget https://physics.mff.cuni.cz/kfpp/povrchy/files/1243-AQuaLEED-2.0.3a.tar.bz2 --progress=dot:giga -O AQuaLEED.tar.bz2 && \
+    mkdir AQuaLEED && \
+    tar -xvf AQuaLEED.tar.bz2 -C AQuaLEED && \
+    rm AQuaLEED.tar.bz2 && \
+    mv AQuaLEED/compilers-linux.ini AQuaLEED/compilers.ini && \
+    sed -i 's|\\data|/data|' AQuaLEED/defaults.ini && \
+    sed -i 's|FTN95-CHECKMATE|gfortran|' AQuaLEED/defaults.ini && \
+    mv AQuaLEED/AQuaLEED.sh /usr/local/bin/aqualeed && \
+    sed -i -e '$apython3 /usr/local/src/AQuaLEED/aqualeed.py "$@"' -e '$d' /usr/local/bin/aqualeed
+
+# Apply Bugfix
+RUN wget https://physics.mff.cuni.cz/kfpp/povrchy/files/1407-satleed-common.f --progress=dot:giga -O /usr/local/src/AQuaLEED/LEED-codes/satleed_common.f
 
 USER $NB_UID
 
 RUN conda install --quiet --yes \
+    'atomsk=0.10.*' \
     'gpaw=21.1.*' \
     'ipywidgets=7.6.*' \
     'ipympl=0.7.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
     'matplotlib-base=3.4.*' \
+    'qe=6.7.*' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
+
+# Fix OpenMPI looking for ssh client, necessary for qe
+
+RUN sed -i -e '$aplm_rsh_agent=sh' /opt/conda/etc/openmpi-mca-params.conf
 
 # Import matplotlib the first time to build the font cache.
 ENV XDG_CACHE_HOME="/home/${NB_USER}/.cache/"

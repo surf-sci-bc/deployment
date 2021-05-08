@@ -7,20 +7,19 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:09fb66007615
 
 FROM $BASE_CONTAINER
 
-# Jupyterhub version has to match version inside the jupyterhub dockerfile
+# Jupyterhub version must match version inside the jupyterhub/Dockerfile
 ARG JUPYTERHUB_VERSION=1.4.0
 
 USER root
 
 # ffmpeg for matplotlib anim & dvipng+cm-super for latex labels
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super quantum-espresso && \
+    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super&& \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
 
 RUN conda install --quiet --yes \
-    'gpaw=21.1.*' \
     'ipywidgets=7.6.*' \
     'ipympl=0.7.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \

@@ -50,8 +50,9 @@ RUN conda install --quiet --yes \
     fix-permissions "/home/${NB_USER}"
 
 # Fix OpenMPI looking for ssh client, necessary for qe
+# Set OpenMPI to use --bind-to core as default for multicore processing
 
-RUN sed -i -e '$aplm_rsh_agent=sh' /opt/conda/etc/openmpi-mca-params.conf
+RUN sed -i -e '$aplm_rsh_agent=sh' -e '$ahwloc_base_binding_policy=core' /opt/conda/etc/openmpi-mca-params.conf
 
 # Import matplotlib the first time to build the font cache.
 ENV XDG_CACHE_HOME="/home/${NB_USER}/.cache/"

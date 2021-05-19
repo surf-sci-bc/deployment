@@ -10,6 +10,9 @@ import sys
 import pwd
 import os
 
+import requests
+import json
+
 from dockerspawner import SystemUserSpawner
 from firstuseauthenticator import FirstUseAuthenticator
 # from jupyterhub.auth import LocalAuthenticator
@@ -52,13 +55,13 @@ class MyDockerSpawner(SystemUserSpawner):
 #         self.log.info(user)
 #         return super().add_system_user(user)
 
+def get_docker_repos():
+    req = requests.get(f"http://registry:5000/v2/_catalog")
+    contents = json.loads(req.content)
+    repos = contents["repositories"]
+    return repos
 
 def get_docker_tags(repo_name):
-    try:
-        import requests
-        import json
-    except ImportError:
-        return ["latest"]
     req = requests.get(f"http://registry:5000/v2/{repo_name}/tags/list")
     contents = json.loads(req.content)
     tags = contents["tags"]
@@ -98,10 +101,15 @@ c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}
 c.SystemUserSpawner.run_as_root = True
-c.MyDockerSpawner.allowed_images = dict(
-    (tag, f"localhost:5000/agfalta_tools:{tag}")
-    for tag in get_docker_tags("agfalta_tools")
-)
+
+repos = get_docker_repos()
+allowed_images = dict()
+for repo in repos:
+    for tag in get_docker_tags(repo)
+        allowed_images[f"{repo}:{tag}"] = f"localhost:5000/{repo}:{tag}"
+
+c.MyDockerSpawner.allowed_images = allowed_images
+
 c.DockerSpawner.volumes = {
     "/home/agfalta/public":           {"bind": "/home/jupyter-{username}/public", "mode": "rw"},
     "/mnt/analysis/jupyter-labbooks": {"bind": "/home/jupyter-{username}/labbooks", "mode": "rw"},

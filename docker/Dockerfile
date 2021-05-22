@@ -14,8 +14,7 @@ USER root
 
 # ffmpeg for matplotlib anim & dvipng+cm-super for latex labels, gfortran for DFT packages
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super gfortran && \
-    apt-get install -y --no-install-recommends cmake && \
+    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super gfortran texlive-science cmake && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install AQuaLEED

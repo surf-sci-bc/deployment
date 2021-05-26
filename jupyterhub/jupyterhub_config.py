@@ -105,7 +105,7 @@ c.SystemUserSpawner.run_as_root = True
 repos = get_docker_repos()
 allowed_images = dict()
 for repo in repos:
-    for tag in get_docker_tags(repo)
+    for tag in get_docker_tags(repo):
         allowed_images[f"{repo}:{tag}"] = f"localhost:5000/{repo}:{tag}"
 
 c.MyDockerSpawner.allowed_images = allowed_images

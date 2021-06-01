@@ -88,8 +88,8 @@ c.JupyterHub.cleanup_servers = False
 c.JupyterHub.services = [{
     "name": "cull-idle", "admin": True, "command": [
         sys.executable, "-m", "jupyterhub_idle_culler",
-        "--timeout=3600", "--cull-every=60",
-        "--max-age=0", "--concurrency=10",
+        "--timeout=86400", "--cull-every=60",
+        "--max-age=604800", "--concurrency=10",
     ]
 }]
 

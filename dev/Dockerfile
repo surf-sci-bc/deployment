@@ -1,14 +1,15 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:09fb66007615
+ARG BASE_CONTAINER=jupyter/minimal-notebook:7999479a0adc
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
 # 27.04.2021 | 584f43f06586
 # 07.05.2021 | 09fb66007615
+# 06.07.2021 | 7999479a0adc
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=1.4.0
+ARG JUPYTERHUB_VERSION=1.4.1
 
 USER root
 

@@ -1,15 +1,16 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:7999479a0adc
+ARG BASE_CONTAINER=jupyter/minimal-notebook:12ba1d59fbc3
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
 # 27.04.2021 | 584f43f06586
 # 07.05.2021 | 09fb66007615
 # 06.07.2021 | 7999479a0adc
+# 12.08.2021 | 12ba1d59fbc3
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=1.4.1
+ARG JUPYTERHUB_VERSION=1.4.2
 
 USER root
 
@@ -37,9 +38,12 @@ RUN wget https://physics.mff.cuni.cz/kfpp/povrchy/files/1407-satleed-common.f --
 
 USER $NB_UID
 
+# The images at jupyter/docker-stacks, where minimal-notebook is pulled from stopped pinning package
+# versions. Packages will still be pinned here, to ensure functionality 
+
 RUN conda install --quiet --yes \
-    'atomsk=0.10.*' \
-    'gpaw=21.1.*' \
+    'atomsk=0.11.*' \
+    'gpaw=21.6.*' \
     'ipywidgets=7.6.*' \
     'ipympl=0.7.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
@@ -73,5 +77,3 @@ RUN python3 -m pip install --no-cache-dir /tmp/agfalta_tools/. && \
     rm -rf /tmp/agfalta_tools && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
-
-

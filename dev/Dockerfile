@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:12ba1d59fbc3
+ARG BASE_CONTAINER=jupyter/minimal-notebook:6f4cbae746cd
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
@@ -6,6 +6,7 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:12ba1d59fbc3
 # 07.05.2021 | 09fb66007615
 # 06.07.2021 | 7999479a0adc
 # 12.08.2021 | 12ba1d59fbc3
+# 09.10.2021 | 6f4cbae746cd
 
 FROM $BASE_CONTAINER
 
@@ -22,7 +23,7 @@ RUN apt-get update && \
 USER $NB_UID
 
 # The images at jupyter/docker-stacks, where minimal-notebook is pulled from stopped pinning package
-# versions. Packages will still be pinned here to ensure functionality 
+# versions. Packages will still be pinned here to ensure functionality
 
 RUN conda install --quiet --yes \
     'ipywidgets=7.6.*' \

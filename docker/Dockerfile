@@ -1,14 +1,18 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:09fb66007615
+ARG BASE_CONTAINER=jupyter/minimal-notebook:6f4cbae746cd
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
 # 27.04.2021 | 584f43f06586
 # 07.05.2021 | 09fb66007615
+# 09.10.2021 | 6f4cbae746cd
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=1.4.0
+ARG JUPYTERHUB_VERSION=1.4.2
+
+# By default, use latest uspy version on PyPI
+ARG USPY_VERSION
 
 USER root
 
@@ -65,12 +69,11 @@ RUN MPLBACKEND=Agg python3 -c "import matplotlib.pyplot" && \
 
 WORKDIR $HOME
 
-# currently relies on agfalta_tools being in the same directory as the Dockerfile
-COPY --chown=${NB_UID}:${NB_GID} agfalta_tools /tmp/agfalta_tools
-
-RUN python3 -m pip install --no-cache-dir /tmp/agfalta_tools/. && \
-    rm -rf /tmp/agfalta_tools && \
-    fix-permissions "${CONDA_DIR}" && \
-    fix-permissions "/home/${NB_USER}"
-
-
+# Syntax: First line evaluates if $USPY_VERSION is empty.
+# If true, && is executed. Else || is.
+# The next && lines are executed if either one completes.
+RUN [ -z "${USPY_VERSION}" ] \
+    && pip install uspy \
+    || pip install uspy=="${USPY_VERSION}" \
+    && fix-permissions "${CONDA_DIR}" \
+    && fix-permissions "/home/${NB_USER}"

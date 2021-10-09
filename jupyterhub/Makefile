@@ -9,7 +9,7 @@ rebuild:
 	docker-compose up -d
 
 clean:
-	rm -rf agfalta_tools
+	rm -rf uspy
 	rm -f repo_location.txt
 
 

@@ -1,29 +1,26 @@
-NAME		?= localhost:5000/agfalta_tools
-TAG			 = latest
-VERSION     ?= HEAD
+NAME		?= localhost:5000/uspy
+VERSION     ?=
 
-all: build push clean
 
-agfalta_tools:
-	git clone https://github.com/surf-sci-bc/agfalta_tools.git
-	git -C agfalta_tools checkout $(VERSION)
+all: build push
 
-gettag: agfalta_tools FORCE
-	$(eval TAG=$$(shell git -C agfalta_tools describe))
-	@echo "\033[94m### checked out git $(VERSION)\033[0m"
+build:
+	docker build --build-arg USPY_VERSION=$(VERSION) -t $(NAME):latest .
+	@echo "\033[94m### built docker image $(NAME):latest\033[0m"
 
-build: agfalta_tools gettag
-	docker build -t $(NAME):$(TAG) -t $(NAME):latest .
-	@echo "\033[94m### built docker image $(NAME):$(TAG)\033[0m"
+gettag:
+	docker run --rm $(NAME):latest python3 -c "import uspy; print(uspy.__version__)" > version.txt
+	docker tag $(NAME):latest $(NAME):$$(cat version.txt)
+	@echo "\033[94m### found uspy version $$(cat version.txt)\033[0m"
 
-push:
-	docker push $(NAME):$(TAG)
+push: gettag
+	docker push $(NAME):$$(cat version.txt)
 	docker push $(NAME):latest
-	@echo "\033[94m### pushed docker image $(NAME):$(TAG)\033[0m"
+	@echo "\033[94m### pushed docker image $(NAME):latest and $(NAME):$$(cat version.txt)\033[0m"
 
 clean:
-	rm -rf agfalta_tools
+	rm -rf version.txt
 
 FORCE:
 
-.PHONY: FORCE build push clean
+.PHONY: FORCE build push

@@ -61,13 +61,13 @@ Jupyterhub is started by using docker-compose in the same folder as the ```docke
 sudo docker-compose up -d
 ```
 
-This file takes care of all neccessary configuraiton, including networking, volumes and bindmounts. Next to the Jupyterhub it also deploys a registry container. That the agfalta_tools images can be pushed to, so they are spawnable by the hub.  
-  
+This file takes care of all neccessary configuraiton, including networking, volumes and bindmounts. Next to the Jupyterhub it also deploys a registry container. That the ```uspy``` images can be pushed to, so they are spawnable by the hub.
+
 The Hub utilizes the FirstUseAuthenicator for Authentication. This means, that the password is set while logging in for the first time. The passwords and the registry data is persistent.
 
 ## Push to registry
 
-Push an image to the registry by tagging it with the registry ```ip``` and ```port```. Choose the ```<TAG>``` accoarding to the ```agfalta_tools``` version beeing built.
+Push an image to the registry by tagging it with the registry ```ip``` and ```port```. Choose the ```<TAG>``` accoarding to the ```uspy``` version beeing built.
 
 ```
 cd deployment
@@ -103,7 +103,7 @@ $ sudo mount -a
 
 ## Have fun.
 
-Now it sould be possible to spawn a ```agfalta_tools``` container, with a authenticated user.
+Now it sould be possible to spawn a ```uspy``` container, with a authenticated user.
 
 
 ## Removing old images from the registry
@@ -111,15 +111,15 @@ Now it sould be possible to spawn a ```agfalta_tools``` container, with a authen
 Show current images stored in the registry:
 
 ```sh
-curl -v -X GET localhost:5000/v2/agfalta_tools/tags/list
+curl -v -X GET localhost:5000/v2/uspy/tags/list
 ```
 
-To delete a tag, you must know the corresponding digest. If it is still on the local machine from building, you can find the digest by using `docker image ls --digests`. Else you have to look at the output from `curl -v -X GET localhost:5000/v2/agfalta_tools/manifests/{tag}`.
+To delete a tag, you must know the corresponding digest. If it is still on the local machine from building, you can find the digest by using `docker image ls --digests`. Else you have to look at the output from `curl -v -X GET localhost:5000/v2/uspy/manifests/{tag}`.
 
 The digest has the form `sha256:123123123123123...`. Delete the digest like this:
 
 ```sh
-curl -v -X DELETE localhost:5000/v2/agfalta_tools/manifests/{digest}
+curl -v -X DELETE localhost:5000/v2/uspy/manifests/{digest}
 ```
 
 Then, to get rid of the superfluous blobs, invoke the garbage collector:

@@ -40,11 +40,11 @@ RUN MPLBACKEND=Agg python3 -c "import matplotlib.pyplot" && \
 
 WORKDIR $HOME
 
-# currently relies on agfalta_tools being in the same directory as the Dockerfile
-COPY --chown=${NB_UID}:${NB_GID} . agfalta_tools
+# currently relies on uspy being in the same directory as the Dockerfile
+COPY --chown=${NB_UID}:${NB_GID} . uspy
 
-RUN python3 -m pip install -e agfalta_tools/. && \
-    rm -rf agfalta_tools/* && \
+RUN python3 -m pip install -e uspy/. && \
+    rm -rf uspy/* && \
     fix-permissions "${CONDA_DIR}" && \
     fix-permissions "/home/${NB_USER}"
 

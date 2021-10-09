@@ -1,6 +1,6 @@
 # Development
 
-Use this to do development in a (local) docker container that uses an editable install of ```agfalta_tools``` that is mounted from your project folder.
+Use this to do development in a (local) docker container that uses an editable install of ```uspy``` that is mounted from your project folder.
 
 ## Preparation
 
@@ -17,7 +17,7 @@ $ cd deployment/
 
 Use either one of the following subsections, not both.
 
-### Automatically download a new copy of `agfalta_tools`
+### Automatically download a new copy of `uspy`
 
 Do this from the `deployment` directory:
 
@@ -25,27 +25,27 @@ Do this from the `deployment` directory:
 $ make dev-build
 ```
 
-This creates a new git repo copy of `agfalta_tools` in `deployment/dev/` and then builds a docker container with that version installed. You can edit it there and changes are reflected directly in your running jupyterlab (see [below](#set-sails)).
+This creates a new git repo copy of `uspy` in `deployment/dev/` and then builds a docker container with that version installed. You can edit it there and changes are reflected directly in your running jupyterlab (see [below](#set-sails)).
 
-### Use an existing copy of `agfalta_tools`
+### Use an existing copy of `uspy`
 
-If you have not done this yet, clone the `agfalta_tools` repository to your projects folder
+If you have not done this yet, clone the `uspy` repository to your projects folder
 
 ```
 $ cd /path/to/projects
-$ git clone git@github.com:surf-sci-bc/agfalta_tools.git
+$ git clone git@github.com:surf-sci-bc/uspy.git
 ```
 
 Now you can build the image (from the `deployment` directory):
 
 ```
 $ cd path/to/deployment
-$ make REPO_DIR=/path/to/projects/agfalta_tools dev-build
+$ make REPO_DIR=/path/to/projects/uspy dev-build
 ```
 
-This will take a short while, but only has to be performed once unless the `Dockerfile` is changed or new requirements have to be installed. 
+This will take a short while, but only has to be performed once unless the `Dockerfile` is changed or new requirements have to be installed.
 
-_Note:_ this will write your `REPO_DIR` path into the file `deployment/dev/repo_location.txt` to use it in all further commands. If you wish to change the `agfalta_tools` location, either repeat above command with another path or delete the `repo_location.txt` file. If the path will stay the same, you can omit that parameter and just write `$ make dev-build` from now on.
+_Note:_ this will write your `REPO_DIR` path into the file `deployment/dev/repo_location.txt` to use it in all further commands. If you wish to change the `uspy` location, either repeat above command with another path or delete the `repo_location.txt` file. If the path will stay the same, you can omit that parameter and just write `$ make dev-build` from now on.
 
 
 ## Set sails
@@ -57,13 +57,13 @@ $ cd path/to/deployment
 $ make dev-run
 ```
 
-You can now access the container by the last link that is given in the terminal. `agfalta_tools` is mounted from the projects folder, so changes to `agfalta_tools` are directly affecting the development environment inside the container and vice versa.
+You can now access the container by the last link that is given in the terminal. `uspy` is mounted from the projects folder, so changes to `uspy` are directly affecting the development environment inside the container and vice versa.
 
 
 ## Additional variables
 
 For the relevant commands, some values can be changed from the command line (like with `REPO_DIR`):
 
-* `IMAGE_NAME`: The name of the docker image. Defaults to `agfalta_tools-dev` (relevant for build and run)
-* `CONT_NAME`: Name of the container that the run target creates (it is destroyed automatically after stopping). Defaults to `agfalta_tools_devJL`
-* `VERSION`: Version of `agfalta` as a git reference. Defaults to `HEAD`
+* `IMAGE_NAME`: The name of the docker image. Defaults to `uspy-dev` (relevant for build and run)
+* `CONT_NAME`: Name of the container that the run target creates (it is destroyed automatically after stopping). Defaults to `uspy_devJL`
+* `VERSION`: Version of `uspy` as a git reference. Defaults to `HEAD`

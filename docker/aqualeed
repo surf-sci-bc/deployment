@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# AQuaLEED launcher for Linux
+# Feel free to edit or rename this script.
+
+export PYTHONHASHSEED=0
+python3 /usr/local/src/AQuaLEED/aqualeed.py "$@"

@@ -59,6 +59,10 @@ def get_docker_repos():
     req = requests.get(f"http://registry:5000/v2/_catalog")
     contents = json.loads(req.content)
     repos = contents["repositories"]
+    # put uspy first if it is there
+    if "uspy" in repos:
+        repos.remove("uspy")
+        repos.insert(0, "uspy")
     return repos
 
 def get_docker_tags(repo_name):

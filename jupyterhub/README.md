@@ -114,17 +114,26 @@ Show current images stored in the registry:
 curl -v -X GET localhost:5000/v2/uspy/tags/list
 ```
 
-To delete a tag, you must know the corresponding digest. If it is still on the local machine from building, you can find the digest by using `docker image ls --digests`. Else you have to look at the output from `curl -v -X GET localhost:5000/v2/uspy/manifests/{tag}`.
-
-The digest has the form `sha256:123123123123123...`. Delete the digest like this:
+To delete a tag, you must know the corresponding digest. If it is still on the local machine from building, you can find the digest by using `docker image ls --digests`. Else you have to look at the output from 
 
 ```sh
-curl -v -X DELETE localhost:5000/v2/uspy/manifests/{digest}
+curl -v --silent -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -X GET http://localhost:5000/v2/{repo}/manifests/{tag} 2>&1 | grep Docker-Content-Digest | awk '{print ($3)}'
 ```
 
-Then, to get rid of the superfluous blobs, invoke the garbage collector:
+where `{repo}` is usually `uspy`. The resulting digest has the form `sha256:123123123123123...`. Delete it like this:
+
+```sh
+curl -v --silent -H "Accept: application/vnd.docker.distribution.manifest.v2+json" -X DELETE http://localhost:5000/v2/{repo}/manifests/{digest}
+```
+
+Then, to get rid of the dependent blobs, invoke the garbage collector and restart the hub:
 
 ```sh
 docker exec jupyterhub_registry_1 registry garbage-collect /etc/docker/registry/config.yml
+make jh-restart
+OR
+make restart
 ```
+
+(the last line depends on where you are in the deployment repository)
 

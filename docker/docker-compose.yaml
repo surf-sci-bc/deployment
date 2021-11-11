@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  jupyterhub:
+    image: agfalta/agfalta_tools
+    build: .
+    ports: 
+      - 8888:8888
+    volumes:
+      - /Users/larsbuss/Projects/agfalta_tools:/home/jovyan/agfalta_tools
+    environment:
+      JUPYTER_ENABLE_LAB: 'yes'
+

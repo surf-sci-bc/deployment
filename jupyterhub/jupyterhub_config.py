@@ -89,18 +89,47 @@ def get_user_names():
 c.JupyterHub.hub_ip = ''
 network_name = os.environ['DOCKER_NETWORK_NAME']
 c.JupyterHub.cleanup_servers = False
-c.JupyterHub.services = [{
-    "name": "cull-idle", "admin": True, "command": [
-        sys.executable, "-m", "jupyterhub_idle_culler",
-        "--timeout=86400", "--cull-every=60",
-        "--max-age=604800", "--concurrency=10",
-    ]
-}]
+
+### Idle Culler Config
+c.JupyterHub.load_roles = [
+    {
+        "name": "jupyterhub-idle-culler-role",
+        "scopes": [
+            "list:users",
+            "read:users:activity",
+            "read:servers",
+            "delete:servers",
+            # "admin:users", # if using --cull-users
+        ],
+        # assignment of role's permissions to:
+        "services": ["jupyterhub-idle-culler-service"],
+    }
+]
+
+# c.JupyterHub.services = [{
+#     "name": "cull-idle", "admin": True, "command": [
+#         sys.executable, "-m", "jupyterhub_idle_culler",
+#         "--timeout=86400", "--cull-every=60",
+#         "--max-age=604800", "--concurrency=10",
+#     ]
+# }]
+
+c.JupyterHub.services = [
+    {
+        "name": "jupyterhub-idle-culler-service",
+        "command": [
+            sys.executable,
+            "-m", "jupyterhub_idle_culler",
+            "--timeout=86400",
+        ],
+        # "admin": True, # For JH<2.0
+    }
+]
 
 ### Spawner config
 c.JupyterHub.spawner_class = MyDockerSpawner
 c.DockerSpawner.network_name = network_name
-c.Spawner.default_url = "/lab"
+#c.Spawner.default_url = "/lab"
 c.SystemUserSpawner.host_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.image_homedir_format_string = "/home/jupyter-{username}"
 c.SystemUserSpawner.environment = {"NB_UMASK": "0022"}

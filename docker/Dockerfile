@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:6f4cbae746cd
+ARG BASE_CONTAINER=jupyter/minimal-notebook:5cd0b55db86f
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
@@ -7,11 +7,12 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:6f4cbae746cd
 # 06.07.2021 | 7999479a0adc
 # 12.08.2021 | 12ba1d59fbc3
 # 09.10.2021 | 6f4cbae746cd
+# 13.06.2022 | 5cd0b55db86f
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=1.4.2
+ARG JUPYTERHUB_VERSION=2.3.1
 
 # By default, use latest uspy version on PyPI
 ARG USPY_VERSION
@@ -47,12 +48,12 @@ USER $NB_UID
 
 RUN conda install --quiet --yes \
     'atomsk=0.11.*' \
-    'gpaw=21.6.*' \
+    'gpaw=22.1.*' \
     'ipywidgets=7.6.*' \
-    'ipympl=0.7.*'\
+    'ipympl=0.9.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
-    'matplotlib-base=3.4.*' \
-    'qe=6.7.*' \
+    'matplotlib-base=3.5.*' \
+    'qe=7.*' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \
@@ -74,11 +75,24 @@ RUN MPLBACKEND=Agg python3 -c "import matplotlib.pyplot" && \
 
 WORKDIR $HOME
 
+# ==== Used only for pypi installation of uspy ====
 # Syntax: First line evaluates if $USPY_VERSION is empty.
 # If true, && is executed. Else || is.
 # The next && lines are executed if either one completes.
-RUN [ -z "${USPY_VERSION}" ] \
-    && pip install uspy \
-    || pip install uspy=="${USPY_VERSION}" \
-    && fix-permissions "${CONDA_DIR}" \
-    && fix-permissions "/home/${NB_USER}"
+#RUN [ -z "${USPY_VERSION}" ] \
+#    && pip install uspy \
+#    || pip install uspy=="${USPY_VERSION}" \
+#    && fix-permissions "${CONDA_DIR}" \
+#    && fix-permissions "/home/${NB_USER}"
+# ==== END ====
+
+
+# ==== Used only for local installation of uspy ====
+# currently relies on agfalta_tools being in the same directory as the Dockerfile
+COPY --chown=${NB_UID}:${NB_GID} uspy /tmp/uspy
+
+RUN python3 -m pip install --no-cache-dir /tmp/uspy/. && \
+    rm -rf /tmp/uspy && \
+    fix-permissions "${CONDA_DIR}" && \
+    fix-permissions "/home/${NB_USER}"
+# ==== END ====

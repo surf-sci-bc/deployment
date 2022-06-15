@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:6f4cbae746cd
+ARG BASE_CONTAINER=jupyter/minimal-notebook:5cd0b55db86f
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
@@ -7,11 +7,12 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:6f4cbae746cd
 # 06.07.2021 | 7999479a0adc
 # 12.08.2021 | 12ba1d59fbc3
 # 09.10.2021 | 6f4cbae746cd
+# 15.05.2022 | 5cd0b55db86f
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=1.4.2
+ARG JUPYTERHUB_VERSION=2.3.1
 
 USER root
 
@@ -27,9 +28,10 @@ USER $NB_UID
 
 RUN conda install --quiet --yes \
     'ipywidgets=7.6.*' \
-    'ipympl=0.7.*'\
+    'ipympl=0.9.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
-    'matplotlib-base=3.4.*' \
+    'matplotlib-base=3.5.*' \
+    'gcc' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \

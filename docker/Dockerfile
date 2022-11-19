@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:5cd0b55db86f
+ARG BASE_CONTAINER=jupyter/minimal-notebook:5a26d88e1949
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275

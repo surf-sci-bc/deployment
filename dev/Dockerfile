@@ -8,17 +8,18 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:5cd0b55db86f
 # 12.08.2021 | 12ba1d59fbc3
 # 09.10.2021 | 6f4cbae746cd
 # 15.05.2022 | 5cd0b55db86f
+# 19.11.2022 | 5a26d88e1949
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=2.3.1
+ARG JUPYTERHUB_VERSION=3.0.0
 
 USER root
 
 # ffmpeg for matplotlib anim & dvipng+cm-super for latex labels
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super&& \
+    apt-get install -y --no-install-recommends ffmpeg dvipng cm-super libhdf5-serial-dev netcdf-bin libnetcdf-dev build-essential wkhtmltopdf&& \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 USER $NB_UID
@@ -31,7 +32,7 @@ RUN conda install --quiet --yes \
     'ipympl=0.9.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
     'matplotlib-base=3.5.*' \
-    'gcc' \
+    #'gcc' \
     && \
     conda clean --all -f -y && \
     fix-permissions "${CONDA_DIR}" && \

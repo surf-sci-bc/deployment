@@ -8,11 +8,12 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:5cd0b55db86f
 # 12.08.2021 | 12ba1d59fbc3
 # 09.10.2021 | 6f4cbae746cd
 # 13.06.2022 | 5cd0b55db86f
+# 19.11.2022 | 5a26d88e1949
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=2.3.1
+ARG JUPYTERHUB_VERSION=3.0.0
 
 # By default, use latest uspy version on PyPI
 ARG USPY_VERSION

@@ -6,32 +6,42 @@
 
 This repo contains setup scripts and configuration files for deploying code on the agfalta jupyter server.
 
+## Intro
+The depolyment repository is organized as following:
+```
+deployment/
+├─ dev / # Dev Container files
+├─ jupyterhub/ # Jupyterhub files (Dockerfile, compose files, config, scripts)
+├─ proxmox/ # Info about setting up PROXMOX Hypervisor
+├─ docker/ # Files for uspy single user server (Dockerfile)
+```
 
 ## Developing
 
 For developing `uspy`, look at the documentation [here](dev/README.md). When you have tested your code changes in your local container, you can commit them to `uspy` and push to github. After that, you can update the version running on the server (next section).
 
+## Update µSPY image
 
-## Updating the server
+If you want to load a new version of µSPY execute the convenience script `deploy_uspy.sh` in deployment/jupyterhub. It expects the tag of the µSPY version as an Argument:
 
-To use the newest `uspy` version on the jupyterhub, log into the jh server via ssh and clone this deployment repository there:
+````
+bash deploy_uspy.sh $VERSION
+`````
+It will atomatically pull the specified version, build the docker images, push to registry and restart jupyterhub to make changes effective.
 
-```sh
-$ ssh xxx@jupyterhub.server
-$ git clone git@github.com:surf-sci-bc/deployment.git
-```
+## Adding users to Jupyterhub
 
-Then, go into the deployment directory. To build a new docker container from the most recent `uspy` commit and push it for use in Jupyterhub, just use the make target:
-
-```sh
-$ cd deployment
-$ make update
-```
-
+Users can be added by running the script `add_user.sh` in deployment/jupyterhub. It expects accepts the name of the user as argument. If argument is given it will ask for the name. A new system user will be created with the name `jupyter-$NAME`. Jupyterhub is automatically restarted to make changes effective.
 
 ## Updating the Jupyterhub container itself
 
-If you want to apply changes to the JH config, first follow the instructions from the last paragraph except for the last command. Then, do `$ make jh-restart` instead of update. This rebuilds the JH container, restarts it and the docker registry.
+If changes are applied to `jupyterhub/jupyterhub_config.py` or the Jupyterhub `Dockerfile` jupyterhub needs to be rebuild. Run 
+```
+make rebuild
+``` 
+inside the `jupyterhub` folder. Restart Jupyterhub with `make restart`.
+
+The Jupyterhub baseimage is the offical Jupyterhub image. The tag of the image corresponds to Jupyterhub version installed inside the image. Be aware, that the Jupyterhub version inside the Jupyterhub container must always match the version inside the `µspy` single-user containers. This is enforced by the `JUPYTERHUB_VERSION` argument in the `uspy Dockerfile`
 
 
 ## GPAW and quantum-espresso

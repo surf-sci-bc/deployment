@@ -7,6 +7,6 @@ else
     NAME=$1
 fi
 echo "Creating User jupyter-$NAME"
-adduser -q --gecos "" --disabled-password jupyter-$1
+adduser -q --gecos "" --disabled-password jupyter-$NAME
 echo "Restarting jupyterhub to load new user"
 docker-compose restart jupyterhub

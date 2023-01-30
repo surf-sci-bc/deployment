@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=jupyter/minimal-notebook:2ace7f71087a
+ARG BASE_CONTAINER=jupyter/minimal-notebook:1ffe43816ba9
 # History
 # 07.12.2020 | 399cbb986c6b
 # 29.01.2021 | 5cb007f03275
@@ -9,11 +9,12 @@ ARG BASE_CONTAINER=jupyter/minimal-notebook:2ace7f71087a
 # 09.10.2021 | 6f4cbae746cd
 # 13.06.2022 | 5cd0b55db86f
 # 19.11.2022 | 2ace7f71087a
+# 30.01.2023 | 1ffe43816ba9
 
 FROM $BASE_CONTAINER
 
 # Jupyterhub version must match version inside the jupyterhub/Dockerfile
-ARG JUPYTERHUB_VERSION=3.0.0
+ARG JUPYTERHUB_VERSION=3.1.1
 
 # By default, use latest uspy version on PyPI
 ARG USPY_VERSION
@@ -49,11 +50,11 @@ USER $NB_UID
 
 RUN conda install --quiet --yes \
     'atomsk=0.11.*' \
-    'gpaw=22.1.*' \
+    'gpaw=22.8.*' \
     'ipywidgets=7.6.*' \
     'ipympl=0.9.*'\
     'jupyterhub='$JUPYTERHUB_VERSION \
-    'matplotlib-base=3.5.*' \
+    'matplotlib-base=3.6.*' \
     'qe=7.*' \
     && \
     conda clean --all -f -y && \
